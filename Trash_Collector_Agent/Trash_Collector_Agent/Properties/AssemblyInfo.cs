@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Trash_Collector_Agent")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Banrisul S.A.")]
+[assembly: AssemblyCompany("Bruno Bragança Mendes")]
 [assembly: AssemblyProduct("Trash_Collector_Agent")]
-[assembly: AssemblyCopyright("Copyright © Banrisul S.A. 2017")]
+[assembly: AssemblyCopyright("Copyright © brbmendes")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

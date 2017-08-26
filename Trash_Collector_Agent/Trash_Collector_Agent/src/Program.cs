@@ -53,23 +53,41 @@ namespace Trash_Collector_Agent.src
                 Console.WriteLine(ex.ToString());
                 Console.ReadKey();
             }
+        }
 
-
+        public static void breakLines()
+        {
+            Console.WriteLine(System.Environment.NewLine);
+            Console.WriteLine(System.Environment.NewLine);
+            Console.WriteLine(System.Environment.NewLine);
         }
 
         static void Main(string[] args)
         {
 
+            #region TESTE DE ESCRITA DE LOG
             //Program.CreateFile();
-            Program.WriteToLog("Testes.");
+            //Program.WriteToLog("Caspita.");
+            #endregion
 
+            #region DECLARAÇÃO DE VARIAVEIS
             Environment env;
             int size = 12;
+            #endregion
 
+            #region INICIALIZAÇÃO DO AMBIENTE
             env = new Environment(size);
+            #endregion
+
+            #region CHAMADA DE METODOS PARA INICIALIZAR MAPA E MOSTRAR AMBIENTE
             env.initializeMap();
             env.showEnvironment();
+            env.buildWalls();
 
+            Program.breakLines();
+            
+            env.showEnvironment();
+            #endregion
             Console.ReadKey();
 
 
