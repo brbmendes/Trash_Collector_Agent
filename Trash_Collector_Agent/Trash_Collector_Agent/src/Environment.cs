@@ -19,11 +19,6 @@ namespace Trash_Collector_Agent.src
         String[,] map;
 
         /// <summary>
-        /// List of wall points
-        /// </summary>
-        List<String[,]> walls;
-
-        /// <summary>
         /// List of trash deposit points
         /// </summary>
         List<Trash_deposit> trashDeposits;
@@ -34,9 +29,24 @@ namespace Trash_Collector_Agent.src
         List<Recharger> rechargers;
 
         /// <summary>
+        /// List of dirty points
+        /// </summary>
+        List<Dirty> dirties;
+
+        /// <summary>
+        /// Map of walls
+        /// </summary>
+        HashSet<Wall> walls;
+
+        /// <summary>
         /// Quantity of trashDeposits
         /// </summary>
         Int32 qtdTrashDeposits;
+
+        /// <summary>
+        /// Percentual of dirty environment
+        /// </summary>
+        Int32 percentDirty;
 
         /// <summary>
         /// Quantity of Rechargers
@@ -44,29 +54,36 @@ namespace Trash_Collector_Agent.src
         Int32 qtdRechargers;
 
 
-        #region CONSTRUTOR TEMPORARIO PARA TESTAR O MAPA
-        public Environment(Int32 size)
-        {
-            this.size = size;
-            this.map = new String[this.size, this.size];
-        }
-        #endregion
+        //#region CONSTRUTOR TEMPORARIO PARA TESTAR O MAPA
+        //public Environment(Int32 size, Int32 qtdTrashDeposits, Int32 qtdRechargers)
+        //{
+        //    this.size = size;
+        //    this.map = new String[this.size, this.size];
+        //    this.qtdTrashDeposits = qtdTrashDeposits;
+        //    this.qtdRechargers = qtdRechargers;
+        //    this.rechargers = new List<Recharger>();
+        //    this.trashDeposits = new List<Trash_deposit>();
+        //}
+        //#endregion
 
         /// <summary>
         /// Environment constructor method
         /// </summary>
         /// <param name="size">Size of environment</param>
-        /// <param name="trashDeposits">List of trash deposit points</param>
-        /// <param name="rechargers">List of recharger points</param>
-        /// <param name="walls">List of wall points</param>
-        public Environment(Int32 size, Int32 qtdTrashDeposits, Int32 qtdRechargers)
+        /// <param name="qtdTrashDeposits">Quantity of trash deposits</param>
+        /// <param name="qtdRechargers">Quantity of rechargers</param>
+        /// <param name="percentDirty">Percentual of dirty environment;</param>
+        public Environment(Int32 size, Int32 qtdTrashDeposits, Int32 qtdRechargers, Int32 percentDirty)
         {
             this.size = size;
-            this.trashDeposits = new List<Trash_deposit>();
-            this.rechargers = new List<Recharger>();
-            this.qtdTrashDeposits = qtdTrashDeposits;
-            this.qtdRechargers = qtdRechargers;
             this.map = new String[this.size, this.size];
+            this.qtdRechargers = qtdRechargers;
+            this.qtdTrashDeposits = qtdTrashDeposits;
+            this.percentDirty = percentDirty;
+            this.walls = new HashSet<Wall>();
+            this.dirties = new List<Dirty>();
+            this.rechargers = new List<Recharger>();
+            this.trashDeposits = new List<Trash_deposit>();
         }
 
         /// <summary>
@@ -113,6 +130,7 @@ namespace Trash_Collector_Agent.src
             while(y < oneThirdSize)
             {
                 this.map.SetValue("# ",0+2,y);
+                this.walls.Add(new Wall(0 + 2, y));
                 y++;
                 //this.showEnvironment();
             }
@@ -123,6 +141,7 @@ namespace Trash_Collector_Agent.src
             while (y < oneThirdSize)
             {
                 this.map.SetValue("# ",this.size-3,y);
+                this.walls.Add(new Wall(this.size - 3, y));
                 y++;
                 //this.showEnvironment();
             }
@@ -136,6 +155,7 @@ namespace Trash_Collector_Agent.src
             while(y < size -2)
             {
                 this.map.SetValue("# ",0+2,y);
+                this.walls.Add(new Wall(0 + 2, y));
                 y++;
                 //this.showEnvironment();
             }
@@ -144,6 +164,7 @@ namespace Trash_Collector_Agent.src
             while(y < size -2)
             {
                 this.map.SetValue("# ",this.size-3,y);
+                this.walls.Add(new Wall(this.size - 3, y));
                 y++;
                 //this.showEnvironment();
             }
@@ -163,6 +184,7 @@ namespace Trash_Collector_Agent.src
                     x++;
                     //this.map.SetValue("# ",x,internalYLeftSide);
                     this.map.SetValue("# ", x, y);
+                    this.walls.Add(new Wall(x, y));
                     //this.showEnvironment();
                 }
                 while(x < this.size-3);
@@ -184,6 +206,7 @@ namespace Trash_Collector_Agent.src
                 {
                     x++;
                     this.map.SetValue("# ", x, y);
+                    this.walls.Add(new Wall(x, y));
                     //this.showEnvironment();
                 }
                 while(x < this.size-3);
@@ -195,69 +218,140 @@ namespace Trash_Collector_Agent.src
 
         }
 
-        public void buildTrashDeposits(Int32 qtdTrashDeposits)
+        public void buildTrashDeposits()
         {
-            Int32 countAux = qtdTrashDeposits;
+            Random rnd = new Random();
+            Int32 leftTrashDeposits = 1;
+            Int32 rightTrashDeposits = 1;
+         
+            if(this.qtdTrashDeposits <= 0)
+            {
+                leftTrashDeposits = 1;
+                rightTrashDeposits = 1;
+            }
+            else if (this.qtdTrashDeposits == 1)
+            {
+                if(rnd.Next(0, 2) == 0)
+                {
+                    leftTrashDeposits = 1;
+                    rightTrashDeposits = 0;
+                }
+                else
+                {
+                    leftTrashDeposits = 0;
+                    rightTrashDeposits = 1;
+                }
+            }
+            else
+            {
+                leftTrashDeposits = this.qtdTrashDeposits / 2;
+                rightTrashDeposits = this.qtdTrashDeposits - leftTrashDeposits;
+            }
+            
             #region left quadrant TrashDeposits
             // size = 16
             // carregadores ficam entre os pontos [0+3,0] , [0+3,0+2] , [this.size-3,0] , [this.size-3,0+2]
-            Double oneThirdSize = (Math.Truncate((this.size / 3) - 0.6) + 1);
-            Double twoThirdsSize = (0.66666666667 * this.size) + 0.77777777779;
-
-
-
-            ////    ACHO QUE A VERSÃO COM DO-WHILE ABAIXO ESTÁ CERTA. TEM QUE TESTAR E DEBUGAR
-            //Random rnd = new Random();
-            //for (Int32 i = 0; i < qtdTrashDeposits ; i++)
-            //{
-            //    Trash_deposit t = new Trash_deposit(rnd.Next(3,this.size-2),rnd.Next(0,3));
-            //    if(this.map.GetValue(t.getX(),t.getY()) == "-")
-            //    {
-            //        this.trashDeposits.Add(t);
-            //    }
-                
-            //}
-
-            Random rnd = new Random();
-            while(countAux > 0)
+            while (this.trashDeposits.Count != leftTrashDeposits)
             {
-                Trash_deposit t;
-                do
+                Trash_deposit t = new Trash_deposit(rnd.Next(3, this.size - 3), rnd.Next(0, 3));
+                if (this.map.GetValue(t.getX(), t.getY()).ToString().Trim() == "-")
                 {
-                    t = new Trash_deposit(rnd.Next(3, this.size - 2), rnd.Next(0, 3));
+                    this.map.SetValue("T ",t.getX(), t.getY());
+                    this.trashDeposits.Add(t);
                 }
-                while (this.map.GetValue(t.getX(), t.getY()) != "-");
-                this.trashDeposits.Add(t);
-                countAux--;
             }
-
-
+            
             #endregion  
 
             #region right quadrant TrashDeposits
             // carregadores ficam entre os pontos [0+3,this.size-2] , [0+3,this.size] , [this.size-3,this.size-2] , [this.size-3,this.size]
-
+            while (this.trashDeposits.Count != leftTrashDeposits+rightTrashDeposits)
+            {
+                Trash_deposit t = new Trash_deposit(rnd.Next(3, this.size - 3), rnd.Next(this.size-2, this.size));
+                if (this.map.GetValue(t.getX(), t.getY()).ToString().Trim() == "-")
+                {
+                    this.map.SetValue("T ", t.getX(), t.getY());
+                    this.trashDeposits.Add(t);
+                }
+            }
             #endregion
         }
 
-        public void buildRechargers(int qtd)
+        public void buildRechargers()
         {
+            Random rnd = new Random();
+            Int32 leftRechargers = 1;
+            Int32 rightRechargers = 1;
+
+            if (this.qtdRechargers <= 0)
+            {
+                leftRechargers = 1;
+                rightRechargers = 1;
+            }
+            else if (this.qtdRechargers == 1)
+            {
+                if (rnd.Next(0, 2) == 0)
+                {
+                    leftRechargers = 1;
+                    rightRechargers = 0;
+                }
+                else
+                {
+                    leftRechargers = 0;
+                    rightRechargers = 1;
+                }
+            }
+            else
+            {
+                rightRechargers = this.qtdRechargers / 2;
+                leftRechargers = this.qtdRechargers - rightRechargers;
+                
+            }
             #region left quadrant Rechargers
             // size = 16
             // carregadores ficam entre os pontos [0+3,0] , [0+3,0+2] , [this.size-3,0] , [this.size-3,0+2]
-            Int32 y = 0;
-            Double oneThirdSize = (Math.Truncate((this.size / 3) - 0.6) + 1);
-
+            while (this.rechargers.Count != leftRechargers)
+            {
+                Recharger r = new Recharger(rnd.Next(3, this.size - 3), rnd.Next(0, 3));
+                if (this.map.GetValue(r.getX(), r.getY()).ToString().Trim() == "-")
+                {
+                    this.map.SetValue("R ", r.getX(), r.getY());
+                    this.rechargers.Add(r);
+                }
+            }
             #endregion
 
             #region right quadrant Rechargers
-            // size = 16
             // carregadores ficam entre os pontos [0+3,this.size-2] , [0+3,this.size] , [this.size-3,this.size-2] , [this.size-3,this.size]
-            
-            Double twoThirdsSize = (0.66666666667 * this.size) + 0.77777777779;
-            y = Convert.ToInt32(Math.Truncate(twoThirdsSize));
-
+            while (this.rechargers.Count != leftRechargers + rightRechargers)
+            {
+                Recharger r = new Recharger(rnd.Next(3, this.size - 3), rnd.Next(this.size - 2, this.size));
+                if (this.map.GetValue(r.getX(), r.getY()).ToString().Trim() == "-")
+                {
+                    this.map.SetValue("R ", r.getX(), r.getY());
+                    this.rechargers.Add(r);
+                }
+            }
             #endregion
+        }
+
+        public void buildDirtyEnvironment()
+        {
+            Double percentDirtyConverted = this.percentDirty * 0.01;
+            Int32 freeBlocks = this.map.Length - this.walls.Count - this.qtdRechargers - this.qtdTrashDeposits;
+            Int32 numberOfDirties = Convert.ToInt32(freeBlocks * percentDirtyConverted);
+            Random rnd = new Random();
+
+            while (this.dirties.Count != numberOfDirties)
+            {
+                Dirty d = new Dirty(rnd.Next(0, this.size), rnd.Next(0, this.size));
+                if (this.map.GetValue(d.getX(), d.getY()).ToString().Trim() == "-")
+                {
+                    this.map.SetValue("D ", d.getX(), d.getY());
+                    this.dirties.Add(d);
+                    //this.showEnvironment();
+                }
+            }
         }
     }
 }
