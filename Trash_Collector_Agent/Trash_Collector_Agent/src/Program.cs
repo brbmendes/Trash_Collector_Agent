@@ -65,31 +65,41 @@ namespace Trash_Collector_Agent.src
         static void Main(string[] args)
         {
 
-            #region TESTE DE ESCRITA DE LOG
-            //Program.CreateFile();
-            //Program.WriteToLog("Caspita.");
-            #endregion
+            //#region TESTE DE ESCRITA DE LOG
+            ////Program.CreateFile();
+            ////Program.WriteToLog("Caspita.");
+            //#endregion
 
-            #region DECLARAÇÃO DE VARIAVEIS
-            Environment env;
-            int size = 12;
-            #endregion
+            //#region DECLARAÇÃO DE VARIAVEIS
+            //Environment env;
+            //int size = 16;
+            //#endregion
 
-            #region INICIALIZAÇÃO DO AMBIENTE
-            env = new Environment(size);
-            #endregion
+            //#region INICIALIZAÇÃO DO AMBIENTE
+            //env = new Environment(size);
+            //#endregion
 
-            #region CHAMADA DE METODOS PARA INICIALIZAR MAPA E MOSTRAR AMBIENTE
-            env.initializeMap();
-            env.showEnvironment();
-            env.buildWalls();
+            //#region CHAMADA DE METODOS PARA INICIALIZAR MAPA E MOSTRAR AMBIENTE
+            //env.initializeMap();
+            //env.showEnvironment();
+            //env.buildWalls();
 
-            Program.breakLines();
+            //Program.breakLines();
             
-            env.showEnvironment();
-            #endregion
-            Console.ReadKey();
+            //env.showEnvironment();
+            //#endregion
+            //Console.ReadKey();
 
+            for(int i = 12 ; i < 27 ; i++)
+            {
+                Console.WriteLine("Tamanho do ambiente = {0}x{0}", i);
+                Environment novoAmbiente = new Environment(i);
+                novoAmbiente.initializeMap();
+                novoAmbiente.buildWalls();
+                novoAmbiente.showEnvironment();
+                Program.breakLines();
+            }
+            Console.ReadKey();
 
         }
     }
