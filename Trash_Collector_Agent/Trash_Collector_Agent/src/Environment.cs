@@ -33,6 +33,17 @@ namespace Trash_Collector_Agent.src
         /// </summary>
         List<Recharger> rechargers;
 
+        /// <summary>
+        /// Quantity of trashDeposits
+        /// </summary>
+        Int32 qtdTrashDeposits;
+
+        /// <summary>
+        /// Quantity of Rechargers
+        /// </summary>
+        Int32 qtdRechargers;
+
+
         #region CONSTRUTOR TEMPORARIO PARA TESTAR O MAPA
         public Environment(Int32 size)
         {
@@ -48,15 +59,19 @@ namespace Trash_Collector_Agent.src
         /// <param name="trashDeposits">List of trash deposit points</param>
         /// <param name="rechargers">List of recharger points</param>
         /// <param name="walls">List of wall points</param>
-        public Environment(Int32 size, List<Trash_deposit> trashDeposits, List<Recharger> rechargers, List<String[,]> walls)
+        public Environment(Int32 size, Int32 qtdTrashDeposits, Int32 qtdRechargers)
         {
             this.size = size;
-            this.trashDeposits = trashDeposits;
-            this.rechargers = rechargers;
-            this.walls = walls;
+            this.trashDeposits = new List<Trash_deposit>();
+            this.rechargers = new List<Recharger>();
+            this.qtdTrashDeposits = qtdTrashDeposits;
+            this.qtdRechargers = qtdRechargers;
             this.map = new String[this.size, this.size];
         }
 
+        /// <summary>
+        /// Initialize map with empty blocks
+        /// </summary>
         public void initializeMap()
         {
             for (Int32 i = 0; i < this.map.GetLength(0); i++)
@@ -90,23 +105,12 @@ namespace Trash_Collector_Agent.src
         {
             Int32 x = 2;
             Int32 y = 2;
-            Double doisTercosSize = (0.66666666667 * this.size) + 0.77777777779;
-            Int32 internalYLeftSide = Convert.ToInt32(Math.Truncate((this.size/3)-0.6));
-            Int32 internalYRightSide = Convert.ToInt32(Math.Truncate(doisTercosSize));
+            Double oneThirdSize = (Math.Truncate((this.size/3)-0.6)+1);
+            Double twoThirdsSize = (0.66666666667 * this.size) + 0.77777777779;
 
-            //#region PAREDES EXTERNAS
-            //map.SetValue("# ", 0 + 2, 0 + 2);
-            //map.SetValue("# ", this.size - 2, 0 + 2);
-            //map.SetValue("# ", 0 + 2, this.size - 2);
-            //map.SetValue("# ", this.size - 2, this.size - 2);
-            //#endregion PAREDES EXTERNAS
-
-            // Os blocos superiores da parede serão nos pontos { [0+2,0+2] , [this.size-2,0+2] }
-            // os blocos inferiores da parede serão nos pontos { [0+2,this.size-2] , [this.size-2,this.size-2] }
-
-            #region quadrante esquerdo - HORIZONTAL
-
-            while(y < ((Math.Truncate((this.size/3)-0.6)+1)))
+            #region left quadrant - HORIZONTAL
+            //while(y < ((Math.Truncate((this.size/3)-0.6)+1)))
+            while(y < oneThirdSize)
             {
                 this.map.SetValue("# ",0+2,y);
                 y++;
@@ -115,7 +119,8 @@ namespace Trash_Collector_Agent.src
             
             y = 2;
             
-            while(y < ((Math.Truncate((this.size/3)-0.6)+1)))
+            //while(y < ((Math.Truncate((this.size/3)-0.6)+1)))
+            while (y < oneThirdSize)
             {
                 this.map.SetValue("# ",this.size-3,y);
                 y++;
@@ -123,11 +128,10 @@ namespace Trash_Collector_Agent.src
             }
 
             #endregion
-            
-            
-            #region quadrante direito - HORIZONTAL
-            //y = 8;
-            y = Convert.ToInt32(Math.Truncate(doisTercosSize));
+
+
+            #region right quadrant - HORIZONTAL
+            y = Convert.ToInt32(Math.Truncate(twoThirdsSize));
 
             while(y < size -2)
             {
@@ -136,12 +140,10 @@ namespace Trash_Collector_Agent.src
                 //this.showEnvironment();
             }
 
-            //y = 8;
-            y = Convert.ToInt32(Math.Truncate(doisTercosSize));
-
+            y = Convert.ToInt32(Math.Truncate(twoThirdsSize));
             while(y < size -2)
             {
-                this.map.SetValue("# ",size-3,y);
+                this.map.SetValue("# ",this.size-3,y);
                 y++;
                 //this.showEnvironment();
             }
@@ -149,11 +151,11 @@ namespace Trash_Collector_Agent.src
             #endregion	
             
             
-            #region quadrante esquerdo - VERTICAL
-            
-            y = 3;
+            #region left quadrant - VERTICAL
 
-            while(y <= Math.Truncate((this.size/3)-0.6))
+            y = 3;
+            //while(y <= Math.Truncate((this.size/3)-0.6))
+            while (y < oneThirdSize)
             {
                 x = 2;
                 do
@@ -163,38 +165,99 @@ namespace Trash_Collector_Agent.src
                     this.map.SetValue("# ", x, y);
                     //this.showEnvironment();
                 }
-                while(x < size-3);
+                while(x < this.size-3);
                 y++;
                 //this.showEnvironment();
                     
             }
             
             #endregion
-            
-            
-            #region quadrante direito - VERTICAL
 
-            //y = 8;
-            y = Convert.ToInt32(Math.Truncate(doisTercosSize));
 
-            while(y < size-3)
+            #region right quadrant - VERTICAL
+            y = Convert.ToInt32(Math.Truncate(twoThirdsSize));
+
+            while(y < this.size-3)
             {
                 x = 2;
-                internalYRightSide = Convert.ToInt32(Math.Truncate(doisTercosSize));
                 do
                 {
                     x++;
-                    //map.SetValue("# ", x, internalYRightSide);
                     this.map.SetValue("# ", x, y);
                     //this.showEnvironment();
                 }
-                while(x < size-3);
+                while(x < this.size-3);
                 y++;
                 //this.showEnvironment();
             }
 
             #endregion
 
+        }
+
+        public void buildTrashDeposits(Int32 qtdTrashDeposits)
+        {
+            Int32 countAux = qtdTrashDeposits;
+            #region left quadrant TrashDeposits
+            // size = 16
+            // carregadores ficam entre os pontos [0+3,0] , [0+3,0+2] , [this.size-3,0] , [this.size-3,0+2]
+            Double oneThirdSize = (Math.Truncate((this.size / 3) - 0.6) + 1);
+            Double twoThirdsSize = (0.66666666667 * this.size) + 0.77777777779;
+
+
+
+            ////    ACHO QUE A VERSÃO COM DO-WHILE ABAIXO ESTÁ CERTA. TEM QUE TESTAR E DEBUGAR
+            //Random rnd = new Random();
+            //for (Int32 i = 0; i < qtdTrashDeposits ; i++)
+            //{
+            //    Trash_deposit t = new Trash_deposit(rnd.Next(3,this.size-2),rnd.Next(0,3));
+            //    if(this.map.GetValue(t.getX(),t.getY()) == "-")
+            //    {
+            //        this.trashDeposits.Add(t);
+            //    }
+                
+            //}
+
+            Random rnd = new Random();
+            while(countAux > 0)
+            {
+                Trash_deposit t;
+                do
+                {
+                    t = new Trash_deposit(rnd.Next(3, this.size - 2), rnd.Next(0, 3));
+                }
+                while (this.map.GetValue(t.getX(), t.getY()) != "-");
+                this.trashDeposits.Add(t);
+                countAux--;
+            }
+
+
+            #endregion  
+
+            #region right quadrant TrashDeposits
+            // carregadores ficam entre os pontos [0+3,this.size-2] , [0+3,this.size] , [this.size-3,this.size-2] , [this.size-3,this.size]
+
+            #endregion
+        }
+
+        public void buildRechargers(int qtd)
+        {
+            #region left quadrant Rechargers
+            // size = 16
+            // carregadores ficam entre os pontos [0+3,0] , [0+3,0+2] , [this.size-3,0] , [this.size-3,0+2]
+            Int32 y = 0;
+            Double oneThirdSize = (Math.Truncate((this.size / 3) - 0.6) + 1);
+
+            #endregion
+
+            #region right quadrant Rechargers
+            // size = 16
+            // carregadores ficam entre os pontos [0+3,this.size-2] , [0+3,this.size] , [this.size-3,this.size-2] , [this.size-3,this.size]
+            
+            Double twoThirdsSize = (0.66666666667 * this.size) + 0.77777777779;
+            y = Convert.ToInt32(Math.Truncate(twoThirdsSize));
+
+            #endregion
         }
     }
 }
