@@ -21,6 +21,16 @@ namespace Trash_Collector_Agent.src
             this.positionY = positionY;
         }
 
+        public Int32 getX()
+        {
+            return this.positionX;
+        }
+
+        public Int32 getY()
+        {
+            return this.positionY;
+        }
+
         public void showPosition()
         {
             Console.WriteLine(String.Format("[{0},{1}]", this.positionX, this.positionY));
