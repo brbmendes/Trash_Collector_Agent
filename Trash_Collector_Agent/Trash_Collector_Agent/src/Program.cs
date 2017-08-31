@@ -70,27 +70,8 @@ namespace Trash_Collector_Agent.src
             ////Program.WriteToLog("Caspita.");
             //#endregion
 
-            //#region DECLARAÇÃO DE VARIAVEIS
-            //Environment env;
-            //int size = 16;
-            //#endregion
-
-            //#region INICIALIZAÇÃO DO AMBIENTE
-            //env = new Environment(size);
-            //#endregion
-
-            //#region CHAMADA DE METODOS PARA INICIALIZAR MAPA E MOSTRAR AMBIENTE
-            //env.initializeMap();
-            //env.showEnvironment();
-            //env.buildWalls();
-
-            //Program.breakLines();
-            
-            //env.showEnvironment();
-            //#endregion
-            //Console.ReadKey();
-
-            for(int i = 12 ; i < 27 ; i++)
+            // CONSTRUÇÃO DO AMBIENTE EM SEQUÊNCIA, PARA VER SE ESTÁ CRIANDO CERTO.
+            for (int i = 12; i < 27; i++)
             {
                 Console.WriteLine("Tamanho do ambiente = {0}x{0}", i);
                 Environment novoAmbiente = new Environment(i);
@@ -100,6 +81,43 @@ namespace Trash_Collector_Agent.src
                 Program.breakLines();
             }
             Console.ReadKey();
+
+            //#region DECLARAÇÃO DE VARIAVEIS
+            //Environment env;
+            //int size = 16;
+            //#endregion
+
+            //#region INSTANCIAÇÃO DO AMBIENTE
+            //env = new Environment(size);
+            //#endregion
+
+            //#region CHAMADA DE METODOS PARA INICIALIZAR MAPA E MOSTRAR AMBIENTE
+            //env.initializeMap();
+            //Console.WriteLine("Tamanho do ambiente = {0}x{0}", size);
+            //env.showEnvironment();
+            //env.buildWalls();
+
+            //Program.breakLines();
+
+            //Console.WriteLine("Tamanho do ambiente = {0}x{0}", size);
+            //env.showEnvironment();
+            //#endregion
+
+
+
+
+
+
+
+
+
+
+
+
+            Console.ReadKey();
+
+
+            
 
         }
     }
