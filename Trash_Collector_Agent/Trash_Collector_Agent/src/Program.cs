@@ -71,13 +71,25 @@ namespace Trash_Collector_Agent.src
             //#endregion
 
             // CONSTRUÇÃO DO AMBIENTE EM SEQUÊNCIA, PARA VER SE ESTÁ CRIANDO CERTO.
+            int rechargers = 5;
+            int trash = 7;
+            int percentDirty = 5;
             for (int i = 12; i < 27; i++)
             {
                 Console.WriteLine("Tamanho do ambiente = {0}x{0}", i);
-                Environment novoAmbiente = new Environment(i);
+                Console.WriteLine("Percentual de sujeira no ambiente = {0} %", percentDirty);
+                Console.WriteLine("Lixeiras = {0}", trash);
+                Console.WriteLine("Recargas = {0}", rechargers);
+                Environment novoAmbiente = new Environment(i, trash, rechargers, percentDirty);
                 novoAmbiente.initializeMap();
+                //novoAmbiente.initializeAgent();
                 novoAmbiente.buildWalls();
+                novoAmbiente.buildTrashDeposits();
+                novoAmbiente.buildRechargers();
+                novoAmbiente.buildDirtyEnvironment();
                 novoAmbiente.showEnvironment();
+                //trash++;
+                //rechargers++;
                 Program.breakLines();
             }
             Console.ReadKey();
@@ -88,7 +100,7 @@ namespace Trash_Collector_Agent.src
             //#endregion
 
             //#region INSTANCIAÇÃO DO AMBIENTE
-            //env = new Environment(size);
+            //env = new Environment(size,3,3);
             //#endregion
 
             //#region CHAMADA DE METODOS PARA INICIALIZAR MAPA E MOSTRAR AMBIENTE
@@ -100,6 +112,12 @@ namespace Trash_Collector_Agent.src
             //Program.breakLines();
 
             //Console.WriteLine("Tamanho do ambiente = {0}x{0}", size);
+            //env.showEnvironment();
+
+            //Program.breakLines();
+
+            //env.buildTrashDeposits();
+            //env.buildRechargers();
             //env.showEnvironment();
             //#endregion
 
