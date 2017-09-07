@@ -33,6 +33,21 @@ namespace Trash_Collector_Agent.src
         /// </summary>
         public Dictionary<String, Int32> oldPosition;
 
+        /// <summary>
+        /// List of trash deposit points
+        /// </summary>
+        List<Trash_deposit> trashDeposits;
+
+        /// <summary>
+        /// List of recharger points
+        /// </summary>
+        List<Recharger> rechargers;
+
+        /// <summary>
+        /// Next Position Map dictionary
+        /// </summary>
+        public Dictionary<String, Int32> nextPosition;
+
         Int32 positionX { get; set; }
         Int32 positionY { get; set; }
 
@@ -45,6 +60,7 @@ namespace Trash_Collector_Agent.src
             this.capacityInternalBattery = internalBattery;
             this.currentInternalBattery = internalBattery;
             oldPosition = new Dictionary<String, Int32>();
+            initializeDictionaryNextPosition();
         }
 
         public Int32 getX()
@@ -95,6 +111,133 @@ namespace Trash_Collector_Agent.src
         public void showPosition()
         {
             Console.WriteLine(String.Format("[{0},{1}]", this.positionX, this.positionY));
+        }
+
+        public void setTrashDeposits(List<Trash_deposit> trashDeposits)
+        {
+            this.trashDeposits = trashDeposits;
+        }
+
+        public void setRechargers(List<Recharger> rechargers)
+        {
+            this.rechargers = rechargers;
+        }
+
+        /// <summary>
+        /// Ambiente em torno do agente
+        /// </summary>
+        Dictionary<String[,], Object> recognizedEnvironment = new Dictionary<string[,],Object>();
+
+        public void initializeDictionaryNextPosition()
+        {
+            this.nextPosition = new Dictionary<String, Int32>();
+            this.nextPosition.Add("D", 1);
+            this.nextPosition.Add("#", 2);
+            this.nextPosition.Add("R", 3);
+            this.nextPosition.Add("T", 4);
+            this.nextPosition.Add("-", 5);
+        }
+
+        public void recognizingEnvironment(String[,] map, Int32 agentPositionX, Int32 agentPositionY)
+        {
+            String[,] north = new String[agentPositionX - 1, agentPositionY];
+            String[,] south = new String[agentPositionX + 1, agentPositionY];
+            String[,] east = new String[agentPositionX, agentPositionY + 1];
+            String[,] west = new String[agentPositionX, agentPositionY - 1];
+            String[,] northEast = new String[agentPositionX - 1, agentPositionY + 1];
+            String[,] northWest = new String[agentPositionX - 1, agentPositionY - 1];
+            String[,] southEast = new String[agentPositionX + 1, agentPositionY + 1];
+            String[,] southWest = new String[agentPositionX + 1, agentPositionY - 1];
+
+            this.recognizedEnvironment.Add(north, map.GetValue(agentPositionX - 1,agentPositionY));
+            this.recognizedEnvironment.Add(south, map.GetValue(agentPositionX + 1, agentPositionY));
+            this.recognizedEnvironment.Add(east, map.GetValue(agentPositionX, agentPositionY + 1));
+            this.recognizedEnvironment.Add(west, map.GetValue(agentPositionX, agentPositionY - 1));
+            this.recognizedEnvironment.Add(northEast, map.GetValue(agentPositionX - 1, agentPositionY + 1));
+            this.recognizedEnvironment.Add(northWest, map.GetValue(agentPositionX - 1, agentPositionY - 1));
+            this.recognizedEnvironment.Add(southEast, map.GetValue(agentPositionX + 1, agentPositionY + 1));
+            this.recognizedEnvironment.Add(southWest, map.GetValue(agentPositionX + 1, agentPositionY - 1));
+        }
+
+        public void move(String[,] map)
+        {
+            // Pontos da atual posição do agente.
+            Int32 agentPositionX = this.getX();
+            Int32 agentPositionY = this.getY();
+
+            // Reconhece ambiente ao redor.
+            recognizingEnvironment(map, agentPositionX, agentPositionY);
+
+
+            //Pega próxima posição do mapa e verifica qual caratere é. 
+            String nextPositionMap = map.GetValue(agentPositionX, agentPositionY + 1).ToString().Trim();
+            int nextPositionMapValue = this.nextPosition[nextPositionMap];
+
+            // Move de acordo com o caractere.
+            switch (nextPositionMapValue)
+            {
+                case 1: // Achou lixo
+                    if (this.usedInternalTrash() > 0)
+                    {
+                        #region atualiza antiga posicao do agente
+                        this.oldPosition.Remove("x");
+                        this.oldPosition.Remove("y");
+                        this.oldPosition.Add("x", this.getX());
+                        this.oldPosition.Add("y", this.getY());
+                        #endregion
+
+                        #region Coleta lixo
+                        this.collectTrash();
+                        #endregion
+
+                        #region Seta "- " onde o agente estava, e "A " na posição a frente
+                        map.SetValue("- ", agentPositionX, agentPositionY);
+                        this.set(agentPositionX, agentPositionY + 1);
+                        map.SetValue("A ", this.getX(), this.getY());
+                        #endregion
+
+                        #region Consome bateria por andar
+                        this.consumeBattery();
+                        #endregion
+
+                    }
+                    //else
+                    //{
+                    //    // USAR ALGORITMO A* PARA ACHAR O deposito de lixo MAIS PRÓXIMO E ANDAR ATÉ ELE.
+                    //    // DESCARREGAR LIXO
+                    //    // USAR ALGORITMO A* PARA retonrar até ao ponto que estava
+                    //}
+                    break;
+                case 2: // Achou parede
+                    // USAR ALGORITMO A* para desviar.
+                    break;
+                case 3: // Achou Carregador
+                    // USAR ALGORITMO A* PARA andar para o próximo ponto na mesma linha, ou na coluna abaixo caso não tenha linha pro lado e seja final da matriz
+                    break;
+                case 4: // Achou depósito de lixo
+                    // USAR ALGORITMO A* PARA andar para o próximo ponto na mesma linha, ou na coluna abaixo caso não tenha linha pro lado e seja final da matriz
+                    break;
+                case 5:
+                    #region atualiza antiga posicao do agente
+                    this.oldPosition.Remove("x");
+                    this.oldPosition.Remove("y");
+                    this.oldPosition.Add("x", this.getX());
+                    this.oldPosition.Add("y", this.getY());
+                    #endregion
+
+                    #region Seta "- " onde o agente estava, e "A " na posição a frente
+                    map.SetValue("- ", agentPositionX, agentPositionY);
+                    this.set(agentPositionX, agentPositionY + 1);
+                    map.SetValue("A ", this.getX(), this.getY());
+                    #endregion
+
+                    #region Consome bateria por andar
+                    this.consumeBattery();
+                    #endregion
+                    break;
+            }
+
+
         }
     }
 }
