@@ -16,7 +16,7 @@ namespace Trash_Collector_Agent.src
         /// <summary>
         /// Map declaration
         /// </summary>
-        String[,] map;
+        public String[,] map;
 
         /// <summary>
         /// Agent
@@ -62,7 +62,7 @@ namespace Trash_Collector_Agent.src
         /// <summary>
         /// Next Position Map dictionary
         /// </summary>
-        Dictionary<String, Int32> nextPosition;
+        public Dictionary<String, Int32> nextPosition;
 
         //#region CONSTRUTOR TEMPORARIO PARA TESTAR O MAPA
         //public Environment(Int32 size, Int32 qtdTrashDeposits, Int32 qtdRechargers)
@@ -97,7 +97,6 @@ namespace Trash_Collector_Agent.src
             this.dirties = new List<Dirty>();
             this.rechargers = new List<Recharger>();
             this.trashDeposits = new List<Trash_deposit>();
-            initializeDictionaryNextPosition();
         }
 
         
@@ -283,10 +282,13 @@ namespace Trash_Collector_Agent.src
             while (this.trashDeposits.Count != leftTrashDeposits)
             {
                 Trash_deposit t = new Trash_deposit(rnd.Next(3, this.size - 3), rnd.Next(0, 3));
-                if (this.map.GetValue(t.getX(), t.getY()).ToString().Trim() == "-")
+                if(t.getY() != 1)
                 {
-                    this.map.SetValue("T ",t.getX(), t.getY());
-                    this.trashDeposits.Add(t);
+                    if (this.map.GetValue(t.getX(), t.getY()).ToString().Trim() == "-")
+                    {
+                        this.map.SetValue("T ", t.getX(), t.getY());
+                        this.trashDeposits.Add(t);
+                    }
                 }
             }
             
@@ -296,14 +298,20 @@ namespace Trash_Collector_Agent.src
             // carregadores ficam entre os pontos [0+3,this.size-2] , [0+3,this.size] , [this.size-3,this.size-2] , [this.size-3,this.size]
             while (this.trashDeposits.Count != leftTrashDeposits+rightTrashDeposits)
             {
-                Trash_deposit t = new Trash_deposit(rnd.Next(3, this.size - 3), rnd.Next(this.size-2, this.size));
-                if (this.map.GetValue(t.getX(), t.getY()).ToString().Trim() == "-")
+                Trash_deposit t = new Trash_deposit(rnd.Next(3, this.size - 3), rnd.Next(this.size-3, this.size));
+                if (t.getY() != this.size - 2)
                 {
-                    this.map.SetValue("T ", t.getX(), t.getY());
-                    this.trashDeposits.Add(t);
+                    if (this.map.GetValue(t.getX(), t.getY()).ToString().Trim() == "-")
+                    {
+                        this.map.SetValue("T ", t.getX(), t.getY());
+                        this.trashDeposits.Add(t);
+                    }
                 }
             }
             #endregion
+
+            // Passing trashDeposits list to Agent.
+            this.agent.setTrashDeposits(this.trashDeposits);
         }
 
         public void buildRechargers()
@@ -342,10 +350,13 @@ namespace Trash_Collector_Agent.src
             while (this.rechargers.Count != leftRechargers)
             {
                 Recharger r = new Recharger(rnd.Next(3, this.size - 3), rnd.Next(0, 3));
-                if (this.map.GetValue(r.getX(), r.getY()).ToString().Trim() == "-")
+                if(r.getY() != 1)
                 {
-                    this.map.SetValue("R ", r.getX(), r.getY());
-                    this.rechargers.Add(r);
+                    if (this.map.GetValue(r.getX(), r.getY()).ToString().Trim() == "-")
+                    {
+                        this.map.SetValue("R ", r.getX(), r.getY());
+                        this.rechargers.Add(r);
+                    }
                 }
             }
             #endregion
@@ -354,14 +365,20 @@ namespace Trash_Collector_Agent.src
             // carregadores ficam entre os pontos [0+3,this.size-2] , [0+3,this.size] , [this.size-3,this.size-2] , [this.size-3,this.size]
             while (this.rechargers.Count != leftRechargers + rightRechargers)
             {
-                Recharger r = new Recharger(rnd.Next(3, this.size - 3), rnd.Next(this.size - 2, this.size));
-                if (this.map.GetValue(r.getX(), r.getY()).ToString().Trim() == "-")
+                Recharger r = new Recharger(rnd.Next(3, this.size - 3), rnd.Next(this.size - 3, this.size));
+                if (r.getY() != this.size - 2)
                 {
-                    this.map.SetValue("R ", r.getX(), r.getY());
-                    this.rechargers.Add(r);
+                    if (this.map.GetValue(r.getX(), r.getY()).ToString().Trim() == "-")
+                    {
+                        this.map.SetValue("R ", r.getX(), r.getY());
+                        this.rechargers.Add(r);
+                    }
                 }
             }
             #endregion
+
+            // Passing rechargers list to Agent.
+            this.agent.setRechargers(this.rechargers);
         }
 
         public void buildDirtyEnvironment()
@@ -384,92 +401,8 @@ namespace Trash_Collector_Agent.src
         }
 
 
-        public void initializeDictionaryNextPosition()
-        {
-            this.nextPosition = new Dictionary<String, Int32>();
-            this.nextPosition.Add("D", 1);
-            this.nextPosition.Add("#", 2);
-            this.nextPosition.Add("R", 3);
-            this.nextPosition.Add("T", 4);
-            this.nextPosition.Add("-", 5);
-        }
+        
 
-        public void move()
-        {
-            // Pontos da atual posição do agente.
-            Int32 agentPositionX = this.agent.getX();
-            Int32 agentPositionY = this.agent.getY();
-
-
-            //Pega próxima posição do mapa e verifica qual caratere é. 
-            String nextPositionMap = this.map.GetValue(agentPositionX, agentPositionY + 1).ToString().Trim();
-            int nextPositionMapValue = this.nextPosition[nextPositionMap];
-
-            // Move de acordo com o caractere.
-            switch (nextPositionMapValue)
-            {
-                case 1: // Achou lixo
-                    if (this.agent.usedInternalTrash() > 0)
-                    {
-                        #region atualiza antiga posicao do agente
-                        this.agent.oldPosition.Remove("x");
-                        this.agent.oldPosition.Remove("y");
-                        this.agent.oldPosition.Add("x", this.agent.getX());
-                        this.agent.oldPosition.Add("y", this.agent.getY());
-                        #endregion
-
-                        #region Coleta lixo
-                        this.agent.collectTrash();
-                        #endregion
-
-                        #region Seta "- " onde o agente estava, e "A " na posição a frente
-                        this.map.SetValue("- ", agentPositionX, agentPositionY);
-                        this.agent.set(agentPositionX, agentPositionY + 1);
-                        this.map.SetValue("A ", this.agent.getX(), this.agent.getY());
-                        #endregion
-
-                        #region Consome bateria por andar
-                        this.agent.consumeBattery();
-                        #endregion
-
-                    }
-                    //else
-                    //{
-                    //    // USAR ALGORITMO A* PARA ACHAR O deposito de lixo MAIS PRÓXIMO E ANDAR ATÉ ELE.
-                    //    // DESCARREGAR LIXO
-                    //    // USAR ALGORITMO A* PARA retonrar até ao ponto que estava
-                    //}
-                    break;
-                case 2: // Achou parede
-                    // USAR ALGORITMO A* para desviar.
-                    break;
-                case 3: // Achou Carregador
-                    // USAR ALGORITMO A* PARA andar para o próximo ponto na mesma linha, ou na coluna abaixo caso não tenha linha pro lado e seja final da matriz
-                    break;
-                case 4: // Achou depósito de lixo
-                    // USAR ALGORITMO A* PARA andar para o próximo ponto na mesma linha, ou na coluna abaixo caso não tenha linha pro lado e seja final da matriz
-                    break;
-                case 5:
-                    #region atualiza antiga posicao do agente
-                    this.agent.oldPosition.Remove("x");
-                    this.agent.oldPosition.Remove("y");
-                    this.agent.oldPosition.Add("x", this.agent.getX());
-                    this.agent.oldPosition.Add("y", this.agent.getY());
-                    #endregion
-                    
-                    #region Seta "- " onde o agente estava, e "A " na posição a frente
-                    this.map.SetValue("- ", agentPositionX, agentPositionY);
-                    this.agent.set(agentPositionX, agentPositionY + 1);
-                    this.map.SetValue("A ", this.agent.getX(), this.agent.getY());
-                    #endregion
-
-                    #region Consome bateria por andar
-                    this.agent.consumeBattery();
-                    #endregion
-                    break;
-            }
-
-            
-        }
+       
     }
 }
