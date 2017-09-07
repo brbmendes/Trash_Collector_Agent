@@ -73,7 +73,7 @@ namespace Trash_Collector_Agent.src
             // CONSTRUÇÃO DO AMBIENTE EM SEQUÊNCIA, PARA VER SE ESTÁ CRIANDO CERTO.
             int rechargers = 5;
             int trash = 7;
-            int percentDirty = 30;
+            int percentDirty = 1;
             int internalTrash = 18;
             int battery = 20;
             for (int i = 12; i < 26; i++)
@@ -138,7 +138,7 @@ namespace Trash_Collector_Agent.src
             //    Program.breakLines();
             //    Console.WriteLine("Lixeira interna = {0}", env.agent.usedInternalTrash());
             //    Console.WriteLine("Bateria interna = {0}", env.agent.usedInternalBattery());
-            //    env.move();
+            //    env.agent.move(env);
             //    Program.breakLines();
             //    env.showEnvironment();
             //}
