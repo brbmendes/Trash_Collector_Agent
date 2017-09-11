@@ -161,10 +161,25 @@ namespace Trash_Collector_Agent.src
 
         public void move(String[,] map)
         {
+            
             // Pontos da atual posição do agente.
             Int32 agentPositionX = this.getX();
             Int32 agentPositionY = this.getY();
+            Position agentPosition = new Position(agentPositionX, agentPositionY);
 
+            Node begin = new Node(agentPositionX, agentPositionY);
+            Position lixeiraMaisProxima = this.calculaLixeiraMaisProxima(agentPosition);
+            Position fimDaMatriz = new Position(Environment.sizeEnv - 1, Environment.sizeEnv - 1);
+            //Node end = new Node(lixeiraMaisProxima.Line, lixeiraMaisProxima.Column);
+            Node end = new Node(fimDaMatriz.Line, fimDaMatriz.Column);
+
+
+            Boolean achouCaminho = Astar.PathFindAStar(map, begin, end);
+            if(achouCaminho)
+            {
+                Console.WriteLine("Caminho encontrado.");
+            }
+            /*
             // Reconhece ambiente ao redor.
             recognizingEnvironment(map, agentPositionX, agentPositionY);
 
@@ -236,8 +251,52 @@ namespace Trash_Collector_Agent.src
                     #endregion
                     break;
             }
+            */
 
+        }
 
+        private Position calculaLixeiraMaisProxima(Position agentPosition)
+        {
+        Position lixeiraMaisProxima = new Position(0,0);
+        Int32 posicaoAbsoluta = Int32.MaxValue;
+        
+        foreach(Trash_deposit trash in this.trashDeposits)
+        {
+            Position tempTrash = new Position(trash.getX(), trash.getY());
+            Int32 posicaoAbsolutaLocal = calculaPosicaoAbsoluta(agentPosition, tempTrash);
+            if(posicaoAbsolutaLocal < posicaoAbsoluta)
+            {
+                lixeiraMaisProxima = tempTrash;
+                posicaoAbsoluta = posicaoAbsolutaLocal;
+            }
+        }
+        return lixeiraMaisProxima;
+        }
+
+        private Position calculaRecarregadorMaisProximo(Position agentPosition)
+        {
+            Position recarregadorMaisProximo = new Position(0, 0);
+            Int32 posicaoAbsoluta = Int32.MaxValue;
+
+            foreach (Recharger recharger in this.rechargers)
+            {
+                Position tempRecharger = new Position(recharger.getX(), recharger.getY());
+                Int32 posicaoAbsolutaLocal = calculaPosicaoAbsoluta(agentPosition, tempRecharger);
+                if (posicaoAbsolutaLocal < posicaoAbsoluta)
+                {
+                    recarregadorMaisProximo = tempRecharger;
+                    posicaoAbsoluta = posicaoAbsolutaLocal;
+                }
+            }
+            return recarregadorMaisProximo;
+        }
+
+        private int calculaPosicaoAbsoluta(Position elem1, Position elem2)
+        {
+            int valorAbsolutoX = Math.Abs(elem1.Line - elem2.Line);
+            int valorAbsolutoY = Math.Abs(elem1.Column - elem2.Column);
+
+            return valorAbsolutoX + valorAbsolutoY;
         }
     }
 }
