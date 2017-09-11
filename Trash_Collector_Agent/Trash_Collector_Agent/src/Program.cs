@@ -70,79 +70,80 @@ namespace Trash_Collector_Agent.src
             ////Program.WriteToLog("Caspita.");
             //#endregion
 
-            // CONSTRUÇÃO DO AMBIENTE EM SEQUÊNCIA, PARA VER SE ESTÁ CRIANDO CERTO.
-            int rechargers = 5;
-            int trash = 7;
-            int percentDirty = 1;
-            int internalTrash = 18;
-            int battery = 20;
-            for (int i = 12; i < 26; i++)
-            {
-                Environment novoAmbiente = new Environment(i, trash, rechargers, percentDirty, internalTrash, battery);
-                Console.WriteLine("Tamanho do ambiente = {0}x{0}", i);
-                Console.WriteLine("Percentual de sujeira no ambiente = {0} %", percentDirty);
-                Console.WriteLine("Lixeiras = {0}", trash);
-                Console.WriteLine("Recargas = {0}", rechargers);
-                Console.WriteLine("Lixeira interna = {0}", novoAmbiente.agent.usedInternalTrash());
-                Console.WriteLine("Bateria interna = {0}", novoAmbiente.agent.usedInternalBattery());
-                novoAmbiente.initializeMap();
-                novoAmbiente.positioningAgent();
-                novoAmbiente.buildWalls();
-                novoAmbiente.buildTrashDeposits();
-                novoAmbiente.buildRechargers();
-                novoAmbiente.buildDirtyEnvironment();
-                novoAmbiente.showEnvironment();
-                Program.breakLines();
-                //novoAmbiente.showEnvironment();
-                //trash++;
-                //rechargers++;
-                //Program.breakLines();
-            }
-            Console.ReadKey();
-
-            //#region DECLARAÇÃO DE VARIAVEIS
-            //Environment env;
-            //int size = 22;
+            //// CONSTRUÇÃO DO AMBIENTE EM SEQUÊNCIA, PARA VER SE ESTÁ CRIANDO CERTO.
             //int rechargers = 5;
             //int trash = 7;
-            //int percentDirty = 30;
+            //int percentDirty = 1;
             //int internalTrash = 18;
             //int battery = 20;
-            //#endregion
+            //for (int i = 12; i < 26; i++)
+            //{
+            //    Environment novoAmbiente = new Environment(i, trash, rechargers, percentDirty, internalTrash, battery);
+            //    Console.WriteLine("Tamanho do ambiente = {0}x{0}", i);
+            //    Console.WriteLine("Percentual de sujeira no ambiente = {0} %", percentDirty);
+            //    Console.WriteLine("Lixeiras = {0}", trash);
+            //    Console.WriteLine("Recargas = {0}", rechargers);
+            //    Console.WriteLine("Lixeira interna = {0}", novoAmbiente.agent.usedInternalTrash());
+            //    Console.WriteLine("Bateria interna = {0}", novoAmbiente.agent.usedInternalBattery());
+            //    novoAmbiente.initializeMap();
+            //    novoAmbiente.positioningAgent();
+            //    novoAmbiente.buildWalls();
+            //    novoAmbiente.buildTrashDeposits();
+            //    novoAmbiente.buildRechargers();
+            //    novoAmbiente.buildDirtyEnvironment();
+            //    novoAmbiente.showEnvironment();
+            //    Program.breakLines();
+            //    //novoAmbiente.showEnvironment();
+            //    //trash++;
+            //    //rechargers++;
+            //    //Program.breakLines();
+            //}
+            //Console.ReadKey();
 
-            //#region INSTANCIAÇÃO DO AMBIENTE
-            //env = new Environment(size, trash, rechargers, percentDirty, internalTrash, battery);
-            //#endregion
+            #region DECLARAÇÃO DE VARIAVEIS
+            Environment env;
+            int size = 22;
+            int rechargers = 5;
+            int trash = 7;
+            int percentDirty = 20;
+            int internalTrash = 18;
+            int battery = 20;
+            #endregion
 
-            //#region CHAMADA DE METODOS PARA INICIALIZAR MAPA E MOSTRAR AMBIENTE
-            //env.initializeMap();
-            //Console.WriteLine("Tamanho do ambiente = {0}x{0}", size);
-            //Console.WriteLine("Percentual de sujeira no ambiente = {0} %", percentDirty);
-            //Console.WriteLine("Lixeiras = {0}", trash);
-            //Console.WriteLine("Recargas = {0}", rechargers);
-            //Console.WriteLine("Lixeira interna = {0}", env.agent.usedInternalTrash());
-            //Console.WriteLine("Bateria interna = {0}", env.agent.usedInternalBattery());
+            #region INSTANCIAÇÃO DO AMBIENTE
+            env = new Environment(size, trash, rechargers, percentDirty, internalTrash, battery);
+            #endregion
 
-            //env.initializeMap();
-            //env.positioningAgent();
-            //env.buildWalls();
-            //env.buildTrashDeposits();
-            //env.buildRechargers();
-            //env.buildDirtyEnvironment();
-            //env.showEnvironment();
+            #region CHAMADA DE METODOS PARA INICIALIZAR MAPA E MOSTRAR AMBIENTE
+            env.initializeMap();
+            Console.WriteLine("Tamanho do ambiente = {0}x{0}", size);
+            Console.WriteLine("Percentual de sujeira no ambiente = {0} %", percentDirty);
+            Console.WriteLine("Lixeiras = {0}", trash);
+            Console.WriteLine("Recargas = {0}", rechargers);
+            Console.WriteLine("Lixeira interna = {0}", env.agent.usedInternalTrash());
+            Console.WriteLine("Bateria interna = {0}", env.agent.usedInternalBattery());
 
-            ////Program.breakLines();
+            env.initializeMap();
+            env.positioningAgent();
+            env.buildWalls();
+            env.buildTrashDeposits();
+            env.buildRechargers();
+            env.buildDirtyEnvironment();
+            env.showEnvironment();
+            Console.ReadKey();
+            env.agent.move(env.map);
+            //Program.breakLines();
 
-            //for (int i = 0; i < 10; i++ )
+            //for (int i = 0; i < 10; i++)
             //{
             //    Program.breakLines();
             //    Console.WriteLine("Lixeira interna = {0}", env.agent.usedInternalTrash());
             //    Console.WriteLine("Bateria interna = {0}", env.agent.usedInternalBattery());
-            //    env.agent.move(env);
+            //    env.agent.move(env.map);
             //    Program.breakLines();
             //    env.showEnvironment();
             //}
-            //#endregion
+            #endregion
 
 
 
