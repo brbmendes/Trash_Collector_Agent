@@ -11,7 +11,9 @@ namespace Trash_Collector_Agent.src
         /// <summary>
         /// Size of environment
         /// </summary>
-        Int32 size;
+        public Int32 size { get; set; }
+
+        public static Int32 sizeEnv { get; set; }
 
         /// <summary>
         /// Map declaration
@@ -88,6 +90,7 @@ namespace Trash_Collector_Agent.src
         public Environment(Int32 size, Int32 qtdTrashDeposits, Int32 qtdRechargers, Int32 percentDirty, Int32 sizeInternalTrash, Int32 capacityInternalBattery)
         {
             this.size = size;
+            sizeEnv = size;
             this.map = new String[this.size, this.size];
             this.agent = new Agent(sizeInternalTrash, capacityInternalBattery);
             this.qtdRechargers = qtdRechargers;
@@ -99,7 +102,11 @@ namespace Trash_Collector_Agent.src
             this.trashDeposits = new List<Trash_deposit>();
         }
 
-        
+        //public static Int32 getSize()
+        //{
+        //    Int32 tempSize = size;
+        //    return size;
+        //}
 
         /// <summary>
         /// Initialize map with empty blocks
@@ -399,10 +406,5 @@ namespace Trash_Collector_Agent.src
                 }
             }
         }
-
-
-        
-
-       
     }
 }
