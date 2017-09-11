@@ -40,7 +40,7 @@ namespace Trash_Collector_Agent.src
 
                 // ordena lista
                 openList = openList.OrderBy(item => item.getFCost()).ToList();
-                Console.WriteLine("Lista aberta: \n");
+                Console.WriteLine("\nLista aberta:");
                 foreach (Node nod in openList)
                 {
                     Console.WriteLine(nod.id);
@@ -53,12 +53,20 @@ namespace Trash_Collector_Agent.src
                 // adiciona na lista fechada.
                 closedList.Add(current);
 
+                // imprime current
+                Console.WriteLine("\nCurrent = " + current.id);
+
 
                 // Verifica se o current é o destino
                 if (current.line == end.line && current.column == end.column)
                 {
                     return true;
                 }
+
+                #region opcional, para evitar movimentos na diagonal.
+                // lista de nós bloqueados, para evitar movimentos na diagonal
+                List<Node> blockedNodes = new List<Node>();
+                #endregion
 
                 // Inicializa e carrega os vizinhos
                 current.initializeNeighbors(map);
@@ -81,8 +89,16 @@ namespace Trash_Collector_Agent.src
                     Boolean estaNaListaFechada = false;
                     Boolean ehParedeOuSujeira = false;
                     // se o vizinho é parede ou sujeira, ou seja, está bloqueado
-                    if (map[neighbor.line, neighbor.column].ToString().Trim() == "#" || map[neighbor.line, neighbor.column].ToString().Trim() == "D")
+
+                    // Só é bloqueaddo "#" e "D"
+                    //if (map[neighbor.line, neighbor.column].ToString().Trim() == "#" || map[neighbor.line, neighbor.column].ToString().Trim() == "D")
+                    
+                    // Tudo que não for "-" é caminho bloqueado.
+                        if (map[neighbor.line, neighbor.column].ToString().Trim() == "#" || map[neighbor.line, neighbor.column].ToString().Trim() == "D" || map[neighbor.line, neighbor.column].ToString().Trim() == "R" || map[neighbor.line, neighbor.column].ToString().Trim() == "T")
                     {
+                        #region adicionado para evitar movimentos na diagonal.
+                        blockedNodes.Add(neighbor);
+                        #endregion
                         // muda flag ehParedeOuSujeira
                         ehParedeOuSujeira = true;
                     }
@@ -106,30 +122,64 @@ namespace Trash_Collector_Agent.src
                             movementCost = 14;
                         }
 
-                        // se o vizinho está na lista aberta, tenta melhorar o caminho até ele através do atual
-                        if (openList.Any(item => item.id == neighbor.id))
+                        #region opcional, para evitar movimentos na diagonal.
+                        // lista de nós bloqueados, para evitar movimentos na diagonal
+                        Boolean ignoreNode = false;
+                        for (Int32 i = 0; i < blockedNodes.Count; i++)
                         {
-
-                            Int32 betterGCost = current.Gcost + movementCost;
-                            if (betterGCost < neighbor.Gcost)
+                            Node blocked = blockedNodes.First();
+                            if (current.line == blocked.line)
                             {
-                                neighbor.father = current;
-                                neighbor.calculateGCost(betterGCost);
-                                neighbor.calculateFCost();
+                                if (neighbor.line != blocked.line && neighbor.column == blocked.column)
+                                {
+                                    ignoreNode = true;
+                                }
+                            }
+                            else if (current.column == blocked.column)
+                            {
+                                if (neighbor.column != blocked.column && neighbor.line == blocked.line)
+                                {
+                                    ignoreNode = true;
+                                }
                             }
                         }
-                        else // se ele chegou aqui, é porque não está na lista aberta.
+
+                        if (ignoreNode)
                         {
-                            neighbor.father = current;
-                            neighbor.calculateGCost(current.Gcost + movementCost);
-                            neighbor.calculateHCost(neighbor, end);
-                            neighbor.calculateFCost();
-                            openList.Add(neighbor);
+                            // ignora, e continua 
                         }
-                        if (!initializedNodes.ContainsKey(neighbor.id))
+                        #endregion
+                        else
                         {
-                            initializedNodes.Add(neighbor.id, neighbor);
+
+                            // ATENÇÃO. SE TIRAR O REGION DOS MOVIMENTOS DIAGONAIS, ESSE TRECHO FICA FORA DO ELSE!!!!
+
+                            // se o vizinho está na lista aberta, tenta melhorar o caminho até ele através do atual
+                            if (openList.Any(item => item.id == neighbor.id))
+                            {
+
+                                Int32 betterGCost = current.Gcost + movementCost;
+                                if (betterGCost < neighbor.Gcost)
+                                {
+                                    neighbor.father = current;
+                                    neighbor.calculateGCost(betterGCost);
+                                    neighbor.calculateFCost();
+                                }
+                            }
+                            else // se ele chegou aqui, é porque não está na lista aberta.
+                            {
+                                neighbor.father = current;
+                                neighbor.calculateGCost(current.Gcost + movementCost);
+                                neighbor.calculateHCost(neighbor, end);
+                                neighbor.calculateFCost();
+                                openList.Add(neighbor);
+                            }
+                            if (!initializedNodes.ContainsKey(neighbor.id))
+                            {
+                                initializedNodes.Add(neighbor.id, neighbor);
+                            }
                         }
+
                     }
 
                 }
