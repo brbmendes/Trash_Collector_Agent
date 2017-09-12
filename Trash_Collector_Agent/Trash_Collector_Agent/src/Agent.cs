@@ -33,6 +33,9 @@ namespace Trash_Collector_Agent.src
         /// </summary>
         public Dictionary<String, Int32> oldPosition;
 
+        public Position lastPosition { get; set; }
+        public Position currentPosition { get; set; }
+
         /// <summary>
         /// List of trash deposit points
         /// </summary>
@@ -159,7 +162,7 @@ namespace Trash_Collector_Agent.src
             this.recognizedEnvironment.Add(southWest, map.GetValue(agentPositionX + 1, agentPositionY - 1));
         }
 
-        public void move(String[,] map)
+        public Node move(String[,] map)
         {
             
             // Pontos da atual posição do agente.
@@ -173,12 +176,14 @@ namespace Trash_Collector_Agent.src
             //Node end = new Node(lixeiraMaisProxima.Line, lixeiraMaisProxima.Column);
             Node end = new Node(fimDaMatriz.Line, fimDaMatriz.Column);
 
-
-            Boolean achouCaminho = Astar.PathFindAStar(map, begin, end);
-            if(achouCaminho)
-            {
-                Console.WriteLine("Caminho encontrado.");
-            }
+            Node nodoDestino = Astar.PathFindAStar(map, begin, end);
+            return nodoDestino;
+            //if(nodoDestino != null)
+            //{
+                
+            //    Console.WriteLine("Caminho encontrado.");
+            //} 
+            
             /*
             // Reconhece ambiente ao redor.
             recognizingEnvironment(map, agentPositionX, agentPositionY);

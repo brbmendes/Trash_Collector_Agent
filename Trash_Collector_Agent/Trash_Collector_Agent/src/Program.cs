@@ -102,10 +102,11 @@ namespace Trash_Collector_Agent.src
 
             #region DECLARAÇÃO DE VARIAVEIS
             Environment env;
-            int size = 22;
+            Node nodoDestino;
+            int size = 12;
             int rechargers = 5;
             int trash = 7;
-            int percentDirty = 20;
+            int percentDirty = 5;
             int internalTrash = 18;
             int battery = 20;
             #endregion
@@ -131,7 +132,10 @@ namespace Trash_Collector_Agent.src
             env.buildDirtyEnvironment();
             env.showEnvironment();
             Console.ReadKey();
-            env.agent.move(env.map);
+            
+            nodoDestino = env.agent.move(env.map);
+            List<Node> lista = env.pegaTodosOsPais(nodoDestino);
+            env.posicionaAgente(env.agent, lista);
             //Program.breakLines();
 
             //for (int i = 0; i < 10; i++)

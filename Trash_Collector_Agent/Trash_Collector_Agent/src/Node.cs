@@ -26,7 +26,7 @@ namespace Trash_Collector_Agent.src
             this.Fcost = 0;
             this.Gcost = 0;
             this.Hcost = 0;
-            this.id = String.Format("x{0}-y{1}", line, column);
+            this.id = String.Format("[{0},{1}]", line, column);
         }
 
         public void initializeNeighbors(String[,] map)

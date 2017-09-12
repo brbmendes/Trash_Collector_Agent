@@ -15,7 +15,7 @@ namespace Trash_Collector_Agent.src
 
         // True se encontrou o caminho
         // False otherwise
-        public static Boolean PathFindAStar(String[,] map, Node begin, Node end)
+        public static Node PathFindAStar(String[,] map, Node begin, Node end)
         {
             //this.map = map;
             Int32 movementCost = 10;
@@ -35,16 +35,16 @@ namespace Trash_Collector_Agent.src
                 if (openList.Count == 0)
                 {
                     Console.WriteLine("Caminho não encontrado.");
-                    return false;
+                    return null;
                 }
 
                 // ordena lista
                 openList = openList.OrderBy(item => item.getFCost()).ToList();
-                Console.WriteLine("\nLista aberta:");
-                foreach (Node nod in openList)
-                {
-                    Console.WriteLine(nod.id);
-                }
+                //Console.WriteLine("\nLista aberta:");
+                //foreach (Node nod in openList)
+                //{
+                //    Console.WriteLine(nod.id);
+                //}
 
                 // pega o nó com menor custo F da lista
                 Node current = openList.First();
@@ -54,13 +54,13 @@ namespace Trash_Collector_Agent.src
                 closedList.Add(current);
 
                 // imprime current
-                Console.WriteLine("\nCurrent = " + current.id);
+                //Console.WriteLine("\nCurrent = " + current.id);
 
 
                 // Verifica se o current é o destino
                 if (current.line == end.line && current.column == end.column)
                 {
-                    return true;
+                    return current;
                 }
 
                 #region opcional, para evitar movimentos na diagonal.

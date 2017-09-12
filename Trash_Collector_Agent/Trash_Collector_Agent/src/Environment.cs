@@ -406,5 +406,69 @@ namespace Trash_Collector_Agent.src
                 }
             }
         }
+
+
+        public List<Node> pegaTodosOsPais(Node nodo)
+        {
+            List<Node> lista = new List<Node>();
+            lista.Add(nodo);
+            pegaTodosPais(nodo, lista);
+            lista.Reverse();
+            return lista;
+        }
+
+
+        private Node pegaTodosPais(Node nodo, List<Node> caminho)
+        {
+            Node novoNodo = nodo.father;
+            if (novoNodo == null)
+            {
+                return null;
+            }
+            caminho.Add(nodo.father);
+            return pegaTodosPais(nodo.father, caminho);
+        }
+
+        public void posicionaAgente(Agent agente, List<Node> lista)
+        {
+            agente.currentPosition = new Position(agente.getX(), agente.getY());
+            agente.lastPosition = new Position(agente.getX(), agente.getY());
+            
+            lista.RemoveAt(0); // remove a posição 00
+            int count = 0;
+            while(lista.Count != 0)
+            {
+                if(count == 0)
+                {
+                    Node temp = lista.First();
+                    lista.RemoveAt(0);
+                    agente.currentPosition.Line = temp.line;
+                    agente.currentPosition.Column = temp.column;
+                    this.map.SetValue("- ", agente.lastPosition.Line, agente.lastPosition.Column);
+                    this.map.SetValue("A ", agente.currentPosition.Line, agente.currentPosition.Column);
+                    Console.WriteLine("\n");
+                    Console.WriteLine("\n");
+                    count++;
+                    this.showEnvironment();
+                } 
+                else
+                {
+                    Node temp = lista.First();
+                    lista.RemoveAt(0);
+                    agente.lastPosition.Line = agente.currentPosition.Line;
+                    agente.lastPosition.Column = agente.currentPosition.Column;
+                    agente.currentPosition.Line = temp.line;
+                    agente.currentPosition.Column = temp.column;
+                    this.map.SetValue("- ", agente.lastPosition.Line, agente.lastPosition.Column);
+                    this.map.SetValue("A ", agente.currentPosition.Line, agente.currentPosition.Column);
+                    Console.WriteLine("\n");
+                    Console.WriteLine("\n");
+                    this.showEnvironment();
+                }
+                
+            }
+            
+        }
+
     }
 }
