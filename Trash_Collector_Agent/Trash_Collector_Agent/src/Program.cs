@@ -65,10 +65,7 @@ namespace Trash_Collector_Agent.src
         static void Main(string[] args)
         {
 
-            //#region TESTE DE ESCRITA DE LOG
-            ////Program.CreateFile();
-            ////Program.WriteToLog("Caspita.");
-            //#endregion
+            
 
             //// CONSTRUÇÃO DO AMBIENTE EM SEQUÊNCIA, PARA VER SE ESTÁ CRIANDO CERTO.
             //int rechargers = 5;
@@ -131,9 +128,14 @@ namespace Trash_Collector_Agent.src
             env.buildRechargers();
             env.buildDirtyEnvironment();
             env.showEnvironment();
-            Console.ReadKey();
+            //Console.ReadKey();
 
             env.agent.clean(env.map);
+
+            //#region TESTE DE ESCRITA DE LOG
+            //Program.CreateFile();
+            //Program.WriteToLog(env.agent.clean(env.map));
+            #endregion
 
             //destinyNode = env.agent.move(env.map);
             //List<Node> listFathers = env.createFatherList(destinyNode);
@@ -149,7 +151,7 @@ namespace Trash_Collector_Agent.src
             //    Program.breakLines();
             //    env.showEnvironment();
             //}
-            #endregion
+            //#endregion
 
 
 
@@ -162,7 +164,7 @@ namespace Trash_Collector_Agent.src
 
 
 
-                Console.ReadKey();
+                //Console.ReadKey();
 
 
             
