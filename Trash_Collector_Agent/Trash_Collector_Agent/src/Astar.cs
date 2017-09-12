@@ -40,11 +40,7 @@ namespace Trash_Collector_Agent.src
 
                 // ordena lista
                 openList = openList.OrderBy(item => item.getFCost()).ToList();
-                //Console.WriteLine("\nLista aberta:");
-                //foreach (Node nod in openList)
-                //{
-                //    Console.WriteLine(nod.id);
-                //}
+
 
                 // pega o nó com menor custo F da lista
                 Node current = openList.First();
@@ -53,20 +49,11 @@ namespace Trash_Collector_Agent.src
                 // adiciona na lista fechada.
                 closedList.Add(current);
 
-                // imprime current
-                //Console.WriteLine("\nCurrent = " + current.id);
-
-
                 // Verifica se o current é o destino
                 if (current.line == end.line && current.column == end.column)
                 {
                     return current;
                 }
-
-                #region opcional, para evitar movimentos na diagonal.
-                // lista de nós bloqueados, para evitar movimentos na diagonal
-                List<Node> blockedNodes = new List<Node>();
-                #endregion
 
                 // Inicializa e carrega os vizinhos
                 current.initializeNeighbors(map);
@@ -93,14 +80,14 @@ namespace Trash_Collector_Agent.src
                     // Só é bloqueaddo "#" e "D"
                     //if (map[neighbor.line, neighbor.column].ToString().Trim() == "#" || map[neighbor.line, neighbor.column].ToString().Trim() == "D")
                     
-                    // Tudo que não for "-" é caminho bloqueado.
+                    // Tudo que não for "-" é caminho bloqueado, exceto se for o nodo destino.
                         if (map[neighbor.line, neighbor.column].ToString().Trim() == "#" || map[neighbor.line, neighbor.column].ToString().Trim() == "D" || map[neighbor.line, neighbor.column].ToString().Trim() == "R" || map[neighbor.line, neighbor.column].ToString().Trim() == "T")
                     {
-                        #region adicionado para evitar movimentos na diagonal.
-                        blockedNodes.Add(neighbor);
-                        #endregion
-                        // muda flag ehParedeOuSujeira
-                        ehParedeOuSujeira = true;
+                            if(end.line == neighbor.line && end.column == neighbor.column){
+
+                            } else {
+                                ehParedeOuSujeira = true;
+                            }               
                     }
 
                     // se o vizinho está na lista fechada
@@ -121,39 +108,6 @@ namespace Trash_Collector_Agent.src
                         {
                             movementCost = 14;
                         }
-
-                        #region opcional, para evitar movimentos na diagonal.
-                        // lista de nós bloqueados, para evitar movimentos na diagonal
-                        Boolean ignoreNode = false;
-                        for (Int32 i = 0; i < blockedNodes.Count; i++)
-                        {
-                            Node blocked = blockedNodes.First();
-                            if (current.line == blocked.line)
-                            {
-                                if (neighbor.line != blocked.line && neighbor.column == blocked.column)
-                                {
-                                    ignoreNode = true;
-                                }
-                            }
-                            else if (current.column == blocked.column)
-                            {
-                                if (neighbor.column != blocked.column && neighbor.line == blocked.line)
-                                {
-                                    ignoreNode = true;
-                                }
-                            }
-                        }
-
-                        if (ignoreNode)
-                        {
-                            // ignora, e continua 
-                        }
-                        #endregion
-                        else
-                        {
-
-                            // ATENÇÃO. SE TIRAR O REGION DOS MOVIMENTOS DIAGONAIS, ESSE TRECHO FICA FORA DO ELSE!!!!
-
                             // se o vizinho está na lista aberta, tenta melhorar o caminho até ele através do atual
                             if (openList.Any(item => item.id == neighbor.id))
                             {
@@ -178,7 +132,7 @@ namespace Trash_Collector_Agent.src
                             {
                                 initializedNodes.Add(neighbor.id, neighbor);
                             }
-                        }
+                        //}
 
                     }
 
