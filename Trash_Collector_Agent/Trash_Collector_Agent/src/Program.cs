@@ -155,15 +155,6 @@ namespace Trash_Collector_Agent.src
 
 
 
-
-
-
-
-
-
-
-
-
                 //Console.ReadKey();
 
 

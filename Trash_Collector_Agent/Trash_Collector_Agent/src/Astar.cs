@@ -76,15 +76,11 @@ namespace Trash_Collector_Agent.src
                     Boolean estaNaListaFechada = false;
                     Boolean ehParedeOuSujeira = false;
                     // se o vizinho é parede ou sujeira, ou seja, está bloqueado
-
-                    // Só é bloqueaddo "#" e "D"
-                    //if (map[neighbor.line, neighbor.column].ToString().Trim() == "#" || map[neighbor.line, neighbor.column].ToString().Trim() == "D")
-                    
                     // Tudo que não for "-" é caminho bloqueado, exceto se for o nodo destino.
                         if (map[neighbor.line, neighbor.column].ToString().Trim() == "#" || map[neighbor.line, neighbor.column].ToString().Trim() == "D" || map[neighbor.line, neighbor.column].ToString().Trim() == "R" || map[neighbor.line, neighbor.column].ToString().Trim() == "T")
                     {
                             if(end.line == neighbor.line && end.column == neighbor.column){
-
+                                // Se o vizinho for o destino, não faz nada.
                             } else {
                                 ehParedeOuSujeira = true;
                             }               
