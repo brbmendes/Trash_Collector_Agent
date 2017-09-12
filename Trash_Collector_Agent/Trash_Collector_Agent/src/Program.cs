@@ -107,7 +107,7 @@ namespace Trash_Collector_Agent.src
             int rechargers = 5;
             int trash = 7;
             int percentDirty = 15;
-            int internalTrash = 8;
+            int internalTrash = 4;
             int battery = 20;
             #endregion
 
