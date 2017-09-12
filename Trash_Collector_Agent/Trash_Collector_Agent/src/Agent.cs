@@ -179,6 +179,7 @@ namespace Trash_Collector_Agent.src
                 {
                     if(this.currentPosition.Column == Environment.sizeEnv - 1) // se for a última coluna
                     {
+                        if (this.currentPosition.Line == Environment.sizeEnv) break;
                         // ... verifica posicao abaixo
                         if(map.GetValue(currentPosition.Line+1, currentPosition.Column).ToString().Trim() == "D" && this.currentInternalTrash > 0)
                         {
@@ -231,6 +232,7 @@ namespace Trash_Collector_Agent.src
                     else
                     {
                         // ... verifica o lado direito
+                        if (this.currentPosition.Column == Environment.sizeEnv) break;
                         if(map.GetValue(currentPosition.Line, currentPosition.Column+1).ToString().Trim() == "D" && this.currentInternalTrash > 0)
                         {
                             
@@ -260,7 +262,7 @@ namespace Trash_Collector_Agent.src
                             this.lastPosition.Line = this.currentPosition.Line;
                             this.lastPosition.Column = this.currentPosition.Column;
                             this.currentPosition.Column += 1;
-                            Console.ReadKey();
+                            //Console.ReadKey();
                         }
                         else // não é sujeira
                         {
@@ -277,7 +279,7 @@ namespace Trash_Collector_Agent.src
 
                     if(this.currentPosition.Column == 0){
                         // ... verifica posicao abaixo
-    
+                        if (this.currentPosition.Line == Environment.sizeEnv) break;
                         if(map.GetValue(currentPosition.Line+1, currentPosition.Column).ToString().Trim() == "D" && this.currentInternalTrash > 0)
                         {
                             this.collectTrash();
@@ -327,6 +329,7 @@ namespace Trash_Collector_Agent.src
                         //this.lastPosition.Column = this.currentPosition.Column;
                     } else {
                         // ... verifica o lado esquerdo
+                        if (this.currentPosition.Column == Environment.sizeEnv) break;
                         if(map.GetValue(currentPosition.Line, currentPosition.Column-1).ToString().Trim() == "D" && this.currentInternalTrash > 0)
                         {
                             this.collectTrash();
