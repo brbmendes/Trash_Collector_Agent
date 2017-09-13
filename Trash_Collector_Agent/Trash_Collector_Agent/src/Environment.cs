@@ -15,6 +15,8 @@ namespace Trash_Collector_Agent.src
 
         public static Int32 sizeEnv { get; set; }
 
+        public static String[,] mapEnv { get; set; }
+
         /// <summary>
         /// Map declaration
         /// </summary>
@@ -92,6 +94,7 @@ namespace Trash_Collector_Agent.src
             this.size = size;
             sizeEnv = size;
             this.map = new String[this.size, this.size];
+            mapEnv = map;
             this.agent = new Agent(sizeInternalTrash, capacityInternalBattery);
             this.qtdRechargers = qtdRechargers;
             this.qtdTrashDeposits = qtdTrashDeposits;
@@ -145,6 +148,18 @@ namespace Trash_Collector_Agent.src
                 for (Int32 j = 0; j < this.size; j++)
                 {
                     Console.Write(this.map.GetValue(i, j));
+                }
+                Console.WriteLine("\n");
+            }
+        }
+
+        public static void showEnv()
+        {
+            for (Int32 i = 0; i < sizeEnv; i++)
+            {
+                for (Int32 j = 0; j < sizeEnv; j++)
+                {
+                    Console.Write(mapEnv.GetValue(i, j));
                 }
                 Console.WriteLine("\n");
             }
@@ -405,6 +420,191 @@ namespace Trash_Collector_Agent.src
                     //this.showEnvironment();
                 }
             }
+        }
+
+
+        public static List<Node> staticCreateFatherList(Node node)
+        {
+            List<Node> list = new List<Node>();
+            list.Add(node);
+            staticPrivateCreateFatherList(node, list);
+            list.Reverse();
+            return list;
+        }
+
+
+        private static Node staticPrivateCreateFatherList(Node node, List<Node> path)
+        {
+            Node novoNodo = node.father;
+            if (novoNodo == null)
+            {
+                return null;
+            }
+            path.Add(node.father);
+            return staticPrivateCreateFatherList(node.father, path);
+        }
+
+        public List<Node> createFatherList(Node node)
+        {
+            List<Node> list = new List<Node>();
+            list.Add(node);
+            privateCreateFatherList(node, list);
+            list.Reverse();
+            return list;
+        }
+
+
+        private Node privateCreateFatherList(Node node, List<Node> path)
+        {
+            Node novoNodo = node.father;
+            if (novoNodo == null)
+            {
+                return null;
+            }
+            path.Add(node.father);
+            return privateCreateFatherList(node.father, path);
+        }
+
+        
+
+        public void moveAgentAroundEnvironment(Agent agent, List<Node> list, Node destinyNode)
+        {
+            
+            agent.currentPosition = new Position(agent.getX(), agent.getY());
+            agent.lastPosition = new Position(agent.getX(), agent.getY());
+            Console.WriteLine("Posição do agente: [{0}][{1}]", agent.currentPosition.Line, agent.currentPosition.Column);
+            Console.WriteLine("Destino do agente: [{0}][{1}]", destinyNode.line, destinyNode.column);
+
+            list.RemoveAt(0); // remove a posição 00
+            int count = 0;
+            while (list.Count != 0)
+            {
+                if(count == 0)
+                {
+                    Node temp = list.First();
+                    list.RemoveAt(0);
+                    agent.currentPosition.Line = temp.line;
+                    agent.currentPosition.Column = temp.column;
+                    if (temp.line == destinyNode.line && temp.column == destinyNode.column)
+                    {
+                        Console.WriteLine("\n");
+                        Console.WriteLine("\n");
+                        Console.WriteLine("Agent position: \t[{0}][{1}]", agent.lastPosition.Line, agent.lastPosition.Column);
+                        Console.WriteLine("Agent next position: \t[{0}][{1}]", agent.currentPosition.Line, agent.currentPosition.Column);
+                        Console.WriteLine("Destiny: \t\t[{0}][{1}]", destinyNode.line, destinyNode.column);
+                        this.showEnvironment();
+                    }
+                    else
+                    {
+                        count++;
+                        this.map.SetValue("- ", agent.lastPosition.Line, agent.lastPosition.Column);
+                        this.map.SetValue("A ", agent.currentPosition.Line, agent.currentPosition.Column);
+                        Console.WriteLine("\n");
+                        Console.WriteLine("\n");
+                        this.showEnvironment();
+                    }
+                } 
+                else
+                {
+                    Node temp = list.First();
+                    list.RemoveAt(0);
+                    agent.lastPosition.Line = agent.currentPosition.Line;
+                    agent.lastPosition.Column = agent.currentPosition.Column;
+                    agent.currentPosition.Line = temp.line;
+                    agent.currentPosition.Column = temp.column;
+                    if(temp.line == destinyNode.line && temp.column == destinyNode.column)
+                    {
+                        Console.WriteLine("\n");
+                        Console.WriteLine("\n");
+                        Console.WriteLine("Agent position: \t[{0}][{1}]", agent.lastPosition.Line, agent.lastPosition.Column);
+                        Console.WriteLine("Agent next position: \t[{0}][{1}]", agent.currentPosition.Line, agent.currentPosition.Column);
+                        Console.WriteLine("Destiny: \t\t[{0}][{1}]", destinyNode.line, destinyNode.column);
+                        this.showEnvironment();
+                    }
+                    else
+                    {
+                        this.map.SetValue("- ", agent.lastPosition.Line, agent.lastPosition.Column);
+                        this.map.SetValue("A ", agent.currentPosition.Line, agent.currentPosition.Column);
+                        Console.WriteLine("\n");
+                        Console.WriteLine("\n");
+                        this.showEnvironment();
+                    }
+                }
+                
+            }
+            
+        }
+
+        public static void staticMoveAgentAroundEnvironment(Agent agent, List<Node> list, Node destinyNode)
+        {
+
+            agent.currentPosition = new Position(agent.getX(), agent.getY());
+            agent.lastPosition = new Position(agent.getX(), agent.getY());
+
+            list.RemoveAt(0); // remove a posição 00
+            int count = 0;
+            while (list.Count != 0)
+            {
+                if (count == 0)
+                {
+                    Node temp = list.First();
+                    list.RemoveAt(0);
+                    agent.currentPosition.Line = temp.line;
+                    agent.currentPosition.Column = temp.column;
+                    if (temp.line == destinyNode.line && temp.column == destinyNode.column)
+                    {
+                        Console.WriteLine("\n");
+                        Console.WriteLine("\n");
+                        Console.WriteLine("Agent position: \t[{0}][{1}]", agent.lastPosition.Line, agent.lastPosition.Column);
+                        Console.WriteLine("Agent next position: \t[{0}][{1}]", agent.currentPosition.Line, agent.currentPosition.Column);
+                        Console.WriteLine("Destiny: \t\t[{0}][{1}]", destinyNode.line, destinyNode.column);
+                        Environment.showEnv();
+                    }
+                    else
+                    {
+                        count++;
+                        mapEnv.SetValue("- ", agent.lastPosition.Line, agent.lastPosition.Column);
+                        mapEnv.SetValue("A ", agent.currentPosition.Line, agent.currentPosition.Column);
+                        Console.WriteLine("\n");
+                        Console.WriteLine("\n");
+                        Environment.showEnv();
+                    }
+                }
+                else
+                {
+                    Node temp = list.First();
+                    list.RemoveAt(0);
+                    agent.lastPosition.Line = agent.currentPosition.Line;
+                    agent.lastPosition.Column = agent.currentPosition.Column;
+                    agent.currentPosition.Line = temp.line;
+                    agent.currentPosition.Column = temp.column;
+                    if (temp.line == destinyNode.line && temp.column == destinyNode.column)
+                    {
+                        Console.WriteLine("\n");
+                        Console.WriteLine("\n");
+                        Console.WriteLine("Agent position: \t[{0}][{1}]", agent.lastPosition.Line, agent.lastPosition.Column);
+                        Console.WriteLine("Agent next position: \t[{0}][{1}]", agent.currentPosition.Line, agent.currentPosition.Column);
+                        Console.WriteLine("Destiny: \t\t[{0}][{1}]", destinyNode.line, destinyNode.column);
+                        Environment.showEnv();
+                    }
+                    else
+                    {
+                        mapEnv.SetValue("- ", agent.lastPosition.Line, agent.lastPosition.Column);
+                        mapEnv.SetValue("A ", agent.currentPosition.Line, agent.currentPosition.Column);
+                        Console.WriteLine("\n");
+                        Console.WriteLine("\n");
+                        Environment.showEnv();
+                    }
+                }
+
+            }
+
+        }
+
+        public static void posicionaAgente(String[,] map, Position novaPos, Position antPos)
+        {
+            Environment.mapEnv.SetValue("- ", antPos.Line, antPos.Column);
+            Environment.mapEnv.SetValue("A ", novaPos.Line, novaPos.Column);
         }
     }
 }

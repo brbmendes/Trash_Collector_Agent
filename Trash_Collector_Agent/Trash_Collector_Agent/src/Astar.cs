@@ -15,7 +15,7 @@ namespace Trash_Collector_Agent.src
 
         // True se encontrou o caminho
         // False otherwise
-        public static Boolean PathFindAStar(String[,] map, Node begin, Node end)
+        public static Node PathFindAStar(String[,] map, Node begin, Node end)
         {
             //this.map = map;
             Int32 movementCost = 10;
@@ -35,16 +35,12 @@ namespace Trash_Collector_Agent.src
                 if (openList.Count == 0)
                 {
                     Console.WriteLine("Caminho não encontrado.");
-                    return false;
+                    return null;
                 }
 
                 // ordena lista
                 openList = openList.OrderBy(item => item.getFCost()).ToList();
-                Console.WriteLine("Lista aberta: \n");
-                foreach (Node nod in openList)
-                {
-                    Console.WriteLine(nod.id);
-                }
+
 
                 // pega o nó com menor custo F da lista
                 Node current = openList.First();
@@ -53,11 +49,10 @@ namespace Trash_Collector_Agent.src
                 // adiciona na lista fechada.
                 closedList.Add(current);
 
-
                 // Verifica se o current é o destino
                 if (current.line == end.line && current.column == end.column)
                 {
-                    return true;
+                    return current;
                 }
 
                 // Inicializa e carrega os vizinhos
@@ -81,10 +76,14 @@ namespace Trash_Collector_Agent.src
                     Boolean estaNaListaFechada = false;
                     Boolean ehParedeOuSujeira = false;
                     // se o vizinho é parede ou sujeira, ou seja, está bloqueado
-                    if (map[neighbor.line, neighbor.column].ToString().Trim() == "#" || map[neighbor.line, neighbor.column].ToString().Trim() == "D")
+                    // Tudo que não for "-" é caminho bloqueado, exceto se for o nodo destino.
+                        if (map[neighbor.line, neighbor.column].ToString().Trim() == "#" || map[neighbor.line, neighbor.column].ToString().Trim() == "D" || map[neighbor.line, neighbor.column].ToString().Trim() == "R" || map[neighbor.line, neighbor.column].ToString().Trim() == "T")
                     {
-                        // muda flag ehParedeOuSujeira
-                        ehParedeOuSujeira = true;
+                            if(end.line == neighbor.line && end.column == neighbor.column){
+                                // Se o vizinho for o destino, não faz nada.
+                            } else {
+                                ehParedeOuSujeira = true;
+                            }               
                     }
 
                     // se o vizinho está na lista fechada
@@ -105,31 +104,32 @@ namespace Trash_Collector_Agent.src
                         {
                             movementCost = 14;
                         }
+                            // se o vizinho está na lista aberta, tenta melhorar o caminho até ele através do atual
+                            if (openList.Any(item => item.id == neighbor.id))
+                            {
 
-                        // se o vizinho está na lista aberta, tenta melhorar o caminho até ele através do atual
-                        if (openList.Any(item => item.id == neighbor.id))
-                        {
-
-                            Int32 betterGCost = current.Gcost + movementCost;
-                            if (betterGCost < neighbor.Gcost)
+                                Int32 betterGCost = current.Gcost + movementCost;
+                                if (betterGCost < neighbor.Gcost)
+                                {
+                                    neighbor.father = current;
+                                    neighbor.calculateGCost(betterGCost);
+                                    neighbor.calculateFCost();
+                                }
+                            }
+                            else // se ele chegou aqui, é porque não está na lista aberta.
                             {
                                 neighbor.father = current;
-                                neighbor.calculateGCost(betterGCost);
+                                neighbor.calculateGCost(current.Gcost + movementCost);
+                                neighbor.calculateHCost(neighbor, end);
                                 neighbor.calculateFCost();
+                                openList.Add(neighbor);
                             }
-                        }
-                        else // se ele chegou aqui, é porque não está na lista aberta.
-                        {
-                            neighbor.father = current;
-                            neighbor.calculateGCost(current.Gcost + movementCost);
-                            neighbor.calculateHCost(neighbor, end);
-                            neighbor.calculateFCost();
-                            openList.Add(neighbor);
-                        }
-                        if (!initializedNodes.ContainsKey(neighbor.id))
-                        {
-                            initializedNodes.Add(neighbor.id, neighbor);
-                        }
+                            if (!initializedNodes.ContainsKey(neighbor.id))
+                            {
+                                initializedNodes.Add(neighbor.id, neighbor);
+                            }
+                        //}
+
                     }
 
                 }
