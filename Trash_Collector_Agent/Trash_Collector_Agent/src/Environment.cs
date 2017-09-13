@@ -333,12 +333,6 @@ namespace Trash_Collector_Agent.src
 
         public void moveAgentAroundEnvironment(Agent robot, List<Node> listPosition, Node target)
         {
-            
-
-            //robot.CurrentPosition = new Position(robot.getX(), robot.getY());
-            //robot.LastPosition = new Position(robot.getX(), robot.getY());
-            Console.WriteLine("Robot current position: \t[{0}][{1}]", robot.CurrentPosition.Line, robot.CurrentPosition.Column);
-            Console.WriteLine("Robot target position: \t\t[{0}][{1}]", target.XY.Line, target.XY.Column);
 
             listPosition.RemoveAt(0); // remove a primeira posição da lista, pois é a mesma que a posição atual do agente
             int count = 0;
@@ -363,14 +357,7 @@ namespace Trash_Collector_Agent.src
                     }                    
                     if (nextPosition.XY.Line == target.XY.Line && nextPosition.XY.Column == target.XY.Column)
                     {
-                        Console.WriteLine("\n\n");
-                        Console.WriteLine("Agent last position: \t[{0}][{1}]", robot.LastPosition.Line, robot.LastPosition.Column);
-                        Console.WriteLine("Agent current position: [{0}][{1}]", robot.CurrentPosition.Line, robot.CurrentPosition.Column);
-                        if(hasNextNextPosition)
-                        {
-                            Console.WriteLine("Agent next position: \t[{0}][{1}]", robot.NextPosition.Line, robot.NextPosition.Column);
-                        }
-                        Console.WriteLine("Agent target: \t\t[{0}][{1}]", target.XY.Line, target.XY.Column);
+                        this.printInfo(hasNextNextPosition, target);
                         if (this.Map.GetValue(target.XY.Line, target.XY.Column) == "-")
                         {
                             robot.updateCurrentPosition(target.XY);
@@ -382,11 +369,7 @@ namespace Trash_Collector_Agent.src
                     {
                         count++;
                         this.printAgent(robot);
-                        Console.WriteLine("\n\n");
-                        Console.WriteLine("Agent last position: \t[{0}][{1}]", robot.LastPosition.Line, robot.LastPosition.Column);
-                        Console.WriteLine("Agent current position: [{0}][{1}]", robot.CurrentPosition.Line, robot.CurrentPosition.Column);
-                        Console.WriteLine("Agent next position: \t[{0}][{1}]", robot.NextPosition.Line, robot.NextPosition.Column);
-                        Console.WriteLine("Agent target: \t\t[{0}][{1}]", target.XY.Line, target.XY.Column);
+                        this.printInfo(true, target);
                         this.showEnvironment();
                     }
                 } 
@@ -410,14 +393,7 @@ namespace Trash_Collector_Agent.src
 
                     if (nextPosition.XY.Line == target.XY.Line && nextPosition.XY.Column == target.XY.Column)
                     {
-                        Console.WriteLine("\n\n");
-                        Console.WriteLine("Agent last position: \t[{0}][{1}]", robot.LastPosition.Line, robot.LastPosition.Column);
-                        Console.WriteLine("Agent current position: [{0}][{1}]", robot.CurrentPosition.Line, robot.CurrentPosition.Column);
-                        if (hasNextNextPosition)
-                        {
-                            Console.WriteLine("Agent next position: \t[{0}][{1}]", robot.NextPosition.Line, robot.NextPosition.Column);
-                        }
-                        Console.WriteLine("Agent target: \t\t[{0}][{1}]", target.XY.Line, target.XY.Column);
+                        this.printInfo(hasNextNextPosition, target);
                         if (this.Map.GetValue(target.XY.Line, target.XY.Column) == "-")
                         {
                             robot.updateCurrentPosition(target.XY);
@@ -428,11 +404,7 @@ namespace Trash_Collector_Agent.src
                     else
                     {
                         this.printAgent(robot);
-                        Console.WriteLine("\n\n");
-                        Console.WriteLine("Agent last position: \t[{0}][{1}]", robot.LastPosition.Line, robot.LastPosition.Column);
-                        Console.WriteLine("Agent current position: [{0}][{1}]", robot.CurrentPosition.Line, robot.CurrentPosition.Column);
-                        Console.WriteLine("Agent next position: \t[{0}][{1}]", robot.NextPosition.Line, robot.NextPosition.Column);
-                        Console.WriteLine("Agent target: \t\t[{0}][{1}]", target.XY.Line, target.XY.Column);
+                        this.printInfo(true, target);
                         this.showEnvironment();
                     }
                 }
@@ -446,5 +418,18 @@ namespace Trash_Collector_Agent.src
             this.Map.SetValue("-", robot.LastPosition.Line, robot.LastPosition.Column);
             this.Map.SetValue("A", robot.CurrentPosition.Line, robot.CurrentPosition.Column);
         }
+
+        public void printInfo(Boolean hasNext, Node target)
+        {
+            Console.WriteLine("\n\n");
+            Console.WriteLine("Agent last position: \t[{0}][{1}]", robot.LastPosition.Line, robot.LastPosition.Column);
+            Console.WriteLine("Agent current position: [{0}][{1}]", robot.CurrentPosition.Line, robot.CurrentPosition.Column);
+            if (hasNext)
+            {
+                Console.WriteLine("Agent next position: \t[{0}][{1}]", robot.NextPosition.Line, robot.NextPosition.Column);
+            }
+            Console.WriteLine("Agent target: \t\t[{0}][{1}]", target.XY.Line, target.XY.Column);
+        }
+
     }
 }
