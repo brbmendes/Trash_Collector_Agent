@@ -96,33 +96,8 @@ namespace Trash_Collector_Agent.src
         {
             this.trashDeposits = trashDeposits;
         }
-        /// <summary>
-        /// Ambiente em torno do agente
-        /// </summary>
-        Dictionary<String[,], Object> recognizedEnvironment = new Dictionary<string[,], Object>();
 
-        public void recognizingEnvironment(String[,] map, Int32 agentPositionX, Int32 agentPositionY)
-        {
-            String[,] north = new String[agentPositionX - 1, agentPositionY];
-            String[,] south = new String[agentPositionX + 1, agentPositionY];
-            String[,] east = new String[agentPositionX, agentPositionY + 1];
-            String[,] west = new String[agentPositionX, agentPositionY - 1];
-            String[,] northEast = new String[agentPositionX - 1, agentPositionY + 1];
-            String[,] northWest = new String[agentPositionX - 1, agentPositionY - 1];
-            String[,] southEast = new String[agentPositionX + 1, agentPositionY + 1];
-            String[,] southWest = new String[agentPositionX + 1, agentPositionY - 1];
-
-            this.recognizedEnvironment.Add(north, map.GetValue(agentPositionX - 1, agentPositionY));
-            this.recognizedEnvironment.Add(south, map.GetValue(agentPositionX + 1, agentPositionY));
-            this.recognizedEnvironment.Add(east, map.GetValue(agentPositionX, agentPositionY + 1));
-            this.recognizedEnvironment.Add(west, map.GetValue(agentPositionX, agentPositionY - 1));
-            this.recognizedEnvironment.Add(northEast, map.GetValue(agentPositionX - 1, agentPositionY + 1));
-            this.recognizedEnvironment.Add(northWest, map.GetValue(agentPositionX - 1, agentPositionY - 1));
-            this.recognizedEnvironment.Add(southEast, map.GetValue(agentPositionX + 1, agentPositionY + 1));
-            this.recognizedEnvironment.Add(southWest, map.GetValue(agentPositionX + 1, agentPositionY - 1));
-        }
-
-        public void clean(String[,] map)
+        public void clean()
         {
 
             Boolean right = true;
@@ -138,7 +113,7 @@ namespace Trash_Collector_Agent.src
                     {
                         if (this.CurrentPosition.Line == environment.Size) break;
                         // ... verifica posicao abaixo
-                        if(map.GetValue(CurrentPosition.Line+1, CurrentPosition.Column).ToString().Trim() == "D" && this.currentInternalTrash > 0)
+                        if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column).ToString().Trim() == "D" && this.currentInternalTrash > 0)
                         {
                             this.collectTrash();
                             this.LastPosition.Line = this.CurrentPosition.Line;
@@ -147,29 +122,57 @@ namespace Trash_Collector_Agent.src
                             right = false;
                             this.LastPosition.Column = this.CurrentPosition.Column;
                         }
-                        else if(map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column).ToString().Trim() == "D" && this.currentInternalTrash == 0)
+                        else if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column).ToString().Trim() == "D" && this.currentInternalTrash == 0)
                         {
-                            Node begin = new Node(this.CurrentPosition.Line, this.CurrentPosition.Column);
-                            Position nearestTrash = this.calculateNearestTrash(this.CurrentPosition);
-                            Node end = new Node(nearestTrash.Line, nearestTrash.Column);
-                            Node destinyNode;
-                            destinyNode = aStar.PathFindAStar(environment, begin, end);
-                            List<Node> listFathers = environment.createFatherList(destinyNode);
-                            List<Node> cloneListFathers = listFathers.ToList<Node>();
-                            Console.WriteLine("Going to destiny");
-                            Console.WriteLine("Current internal trash capacity: {0}", this.currentInternalTrash);
-                            environment.moveAgentAroundEnvironment(this, listFathers, destinyNode);
-                            this.cleanInternalTrash();
-                            cloneListFathers.Reverse();
-                            Console.WriteLine("Returning from destiny");
-                            Console.WriteLine("Current internal trash capacity: {0}", this.currentInternalTrash);
-                            environment.moveAgentAroundEnvironment(this, cloneListFathers, destinyNode);
+                            this.locateNearestTrashAndCleanTrash();  
                             this.collectTrash();
                             this.LastPosition.Line = this.CurrentPosition.Line;
                             this.CurrentPosition.Line += 1;
                             if (this.CurrentPosition.Line == environment.Size) break;
                             right = false;
                             this.LastPosition.Column = this.CurrentPosition.Column;
+                        }
+                        // se for sujeira
+                        else if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column).ToString().Trim() == "T")
+                        {
+                            Position pos = new Position(this.CurrentPosition.Line, this.CurrentPosition.Column - 1);
+                            this.updateLastPosition(this.CurrentPosition);
+                            this.CurrentPosition = pos;
+                            Console.WriteLine("\n");
+                            Console.WriteLine("Current internal trash capacity: {0}", this.currentInternalTrash);
+                            environment.printAgent(this);
+                            environment.showEnvironment();
+
+                            // se for sujeira e lixeira NÃO estiver cheia
+                            if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column).ToString().Trim() == "D" && this.currentInternalTrash > 0)
+                            {
+                                this.collectTrash();
+                                this.LastPosition.Line = this.CurrentPosition.Line;
+                                this.CurrentPosition.Line += 1;
+                                if (this.CurrentPosition.Line == environment.Size) break;
+                                right = false;
+                                this.LastPosition.Column = this.CurrentPosition.Column;
+                            }
+                            // se for sujeira e lixeira ESTIVER cheia
+                            else if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column).ToString().Trim() == "D" && this.currentInternalTrash == 0)
+                            {
+
+                                this.locateNearestTrashAndCleanTrash();
+                                this.collectTrash();
+                                this.LastPosition.Line = this.CurrentPosition.Line;
+                                this.CurrentPosition.Line += 1;
+                                if (this.CurrentPosition.Line == environment.Size) break;
+                                right = false;
+                                this.LastPosition.Column = this.CurrentPosition.Column;
+                            }
+                            else
+                            {
+                                this.LastPosition.Line = this.CurrentPosition.Line;
+                                this.CurrentPosition.Line += 1;
+                                if (this.CurrentPosition.Line == environment.Size) break;
+                                right = false;
+                                this.LastPosition.Column = this.CurrentPosition.Column;
+                            }
                         }
                         else{
                             this.LastPosition.Line = this.CurrentPosition.Line;
@@ -178,19 +181,12 @@ namespace Trash_Collector_Agent.src
                             right = false;
                             this.LastPosition.Column = this.CurrentPosition.Column;
                         }
-                         
-                        //this.collectTrash();
-                        //this.lastPosition.Line = this.CurrentPosition.Line;
-                        //this.CurrentPosition.Line += 1;
-                        //if(this.CurrentPosition.Line == environment.Size) break;
-                        //right = false;
-                        //this.lastPosition.Column = this.CurrentPosition.Column;
                     }
                     else
                     {
                         // ... verifica o lado direito
                         if (this.CurrentPosition.Column == environment.Size) break;
-                        if(map.GetValue(CurrentPosition.Line, CurrentPosition.Column+1).ToString().Trim() == "D" && this.currentInternalTrash > 0)
+                        if (environment.Map.GetValue(CurrentPosition.Line, CurrentPosition.Column + 1).ToString().Trim() == "D" && this.currentInternalTrash > 0)
                         {
                             
                             this.collectTrash();
@@ -198,23 +194,9 @@ namespace Trash_Collector_Agent.src
                             Position pos = new Position(this.CurrentPosition.Line, this.CurrentPosition.Column + 1);
                             this.updateCurrentPosition(pos);
                         }
-                        else if (map.GetValue(CurrentPosition.Line, CurrentPosition.Column + 1).ToString().Trim() == "D" && this.currentInternalTrash == 0) // se for sujeira e estiver cheio
+                        else if (environment.Map.GetValue(CurrentPosition.Line, CurrentPosition.Column + 1).ToString().Trim() == "D" && this.currentInternalTrash == 0) // se for sujeira e estiver cheio
                         {
-                            Node begin = new Node(this.CurrentPosition.Line, this.CurrentPosition.Column);
-                            Position nearestTrash = this.calculateNearestTrash(this.CurrentPosition);
-                            Node end = new Node(nearestTrash.Line, nearestTrash.Column);
-                            Node destinyNode;
-                            destinyNode = aStar.PathFindAStar(environment, begin, end);
-                            List<Node> listFathers = environment.createFatherList(destinyNode);
-                            List<Node> cloneListFathers = listFathers.ToList<Node>();
-                            Console.WriteLine("Going to destiny - RUNNUNG A*");
-                            Console.WriteLine("Current internal trash capacity: {0}", this.currentInternalTrash);
-                            environment.moveAgentAroundEnvironment(this, listFathers, destinyNode);
-                            this.cleanInternalTrash();
-                            cloneListFathers.Reverse();
-                            Console.WriteLine("Returning from destiny - RUNNUNG A*");
-                            Console.WriteLine("Current internal trash capacity: {0}", this.currentInternalTrash);
-                            environment.moveAgentAroundEnvironment(this, cloneListFathers, destinyNode);
+                            this.locateNearestTrashAndCleanTrash();  
                             this.collectTrash();
                             this.updateLastPosition(this.CurrentPosition);
                             Position pos = new Position(this.CurrentPosition.Line, this.CurrentPosition.Column + 1);
@@ -235,8 +217,9 @@ namespace Trash_Collector_Agent.src
 
                     if(this.CurrentPosition.Column == 0){
                         // ... verifica posicao abaixo
-                        if (this.CurrentPosition.Line == environment.Size) break;
-                        if(map.GetValue(CurrentPosition.Line+1, CurrentPosition.Column).ToString().Trim() == "D" && this.currentInternalTrash > 0)
+                        
+                        // se for sujeira e lixeira NÃO estiver cheia
+                        if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column).ToString().Trim() == "D" && this.currentInternalTrash > 0)
                         {
                             this.collectTrash();
                             this.LastPosition.Line = this.CurrentPosition.Line;
@@ -245,28 +228,59 @@ namespace Trash_Collector_Agent.src
                             right = true;
                             this.LastPosition.Column = this.CurrentPosition.Column;
                         }
-                        else if (map.GetValue(CurrentPosition.Line+1, CurrentPosition.Column).ToString().Trim() == "D" && this.currentInternalTrash == 0)
+                        // se for sujeira e lixeira ESTIVER cheia
+                        else if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column).ToString().Trim() == "D" && this.currentInternalTrash == 0)
                         {
-                            Node begin = new Node(this.CurrentPosition.Line, this.CurrentPosition.Column);
-                            Position nearestTrash = this.calculateNearestTrash(this.CurrentPosition);
-                            Node end = new Node(nearestTrash.Line, nearestTrash.Column);
-                            Node destinyNode;
-                            destinyNode = aStar.PathFindAStar(environment, begin, end);
-                            List<Node> listFathers = environment.createFatherList(destinyNode);
-                            List<Node> cloneListFathers = listFathers.ToList<Node>();
-                            Console.WriteLine("Going to destiny - RUNNUNG A*");
-                            Console.WriteLine("Current internal trash capacity: {0}", this.currentInternalTrash);
-                            environment.moveAgentAroundEnvironment(this, listFathers, destinyNode);
-                            this.cleanInternalTrash();
-                            cloneListFathers.Reverse();
-                            Console.WriteLine("Returning from destiny - RUNNUNG A*");
-                            environment.moveAgentAroundEnvironment(this, cloneListFathers, destinyNode);
+
+                            this.locateNearestTrashAndCleanTrash();               
                             this.collectTrash();
                             this.LastPosition.Line = this.CurrentPosition.Line;
                             this.CurrentPosition.Line += 1;
                             if (this.CurrentPosition.Line == environment.Size) break;
                             right = true;
                             this.LastPosition.Column = this.CurrentPosition.Column;
+                        }
+                        // se for lixeira
+                        else if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column).ToString().Trim() == "T")
+                        {
+                            Position pos = new Position(this.CurrentPosition.Line, this.CurrentPosition.Column + 1);
+                            this.updateLastPosition(this.CurrentPosition);
+                            this.CurrentPosition = pos;
+                            Console.WriteLine("\n");
+                            Console.WriteLine("Current internal trash capacity: {0}", this.currentInternalTrash);
+                            environment.printAgent(this);
+                            environment.showEnvironment();
+                            
+                            if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column).ToString().Trim() == "D" && this.currentInternalTrash > 0)
+                            {
+                                this.collectTrash();
+                                this.LastPosition.Line = this.CurrentPosition.Line;
+                                this.CurrentPosition.Line += 1;
+                                if (this.CurrentPosition.Line == environment.Size) break;
+                                right = true;
+                                this.LastPosition.Column = this.CurrentPosition.Column;
+                            }
+                            // se for sujeira e lixeira ESTIVER cheia
+                            else if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column).ToString().Trim() == "D" && this.currentInternalTrash == 0)
+                            {
+
+                                this.locateNearestTrashAndCleanTrash();
+                                this.collectTrash();
+                                this.LastPosition.Line = this.CurrentPosition.Line;
+                                this.CurrentPosition.Line += 1;
+                                if (this.CurrentPosition.Line == environment.Size) break;
+                                right = true;
+                                this.LastPosition.Column = this.CurrentPosition.Column;
+                            }
+                            else
+                            {
+                                this.LastPosition.Line = this.CurrentPosition.Line;
+                                this.CurrentPosition.Line += 1;
+                                if (this.CurrentPosition.Line == environment.Size) break;
+                                right = true;
+                                this.LastPosition.Column = this.CurrentPosition.Column;
+                            }
+                            
                         }
                         else 
                         {
@@ -276,39 +290,19 @@ namespace Trash_Collector_Agent.src
                             right = true;
                             this.LastPosition.Column = this.CurrentPosition.Column;
                         }
-
-                        //this.collectTrash();
-                        //this.lastPosition.Line = this.CurrentPosition.Line;
-                        //this.CurrentPosition.Line += 1;
-                        //if(this.CurrentPosition.Line == environment.Size) break;
-                        //right = true;
-                        //this.lastPosition.Column = this.CurrentPosition.Column;
                     } else {
                         // ... verifica o lado esquerdo
                         if (this.CurrentPosition.Column == environment.Size) break;
-                        if(map.GetValue(CurrentPosition.Line, CurrentPosition.Column-1).ToString().Trim() == "D" && this.currentInternalTrash > 0)
+                        if (environment.Map.GetValue(CurrentPosition.Line, CurrentPosition.Column - 1).ToString().Trim() == "D" && this.currentInternalTrash > 0)
                         {
                             this.collectTrash();
                             this.LastPosition.Line = this.CurrentPosition.Line;
                             this.LastPosition.Column = this.CurrentPosition.Column;
                             this.CurrentPosition.Column -= 1;
                         }
-                        else if (map.GetValue(CurrentPosition.Line, CurrentPosition.Column-1).ToString().Trim() == "D" && this.currentInternalTrash == 0)
+                        else if (environment.Map.GetValue(CurrentPosition.Line, CurrentPosition.Column - 1).ToString().Trim() == "D" && this.currentInternalTrash == 0)
                         {
-                            Node begin = new Node(this.CurrentPosition.Line, this.CurrentPosition.Column);
-                            Position nearestTrash = this.calculateNearestTrash(this.CurrentPosition);
-                            Node end = new Node(nearestTrash.Line, nearestTrash.Column);
-                            Node destinyNode;
-                            destinyNode = aStar.PathFindAStar(environment, begin, end);
-                            List<Node> listFathers = environment.createFatherList(destinyNode);
-                            List<Node> cloneListFathers = listFathers.ToList<Node>();
-                            Console.WriteLine("Going to destiny - RUNNUNG A*");
-                            environment.moveAgentAroundEnvironment(this, listFathers, destinyNode);
-                            this.cleanInternalTrash();
-                            cloneListFathers.Reverse();
-                            Console.WriteLine("Returning from destiny - RUNNUNG A*");
-                            Console.WriteLine("Current internal trash capacity: {0}", this.currentInternalTrash);
-                            environment.moveAgentAroundEnvironment(this, cloneListFathers, destinyNode);
+                            this.locateNearestTrashAndCleanTrash();
                             this.collectTrash();
                             this.LastPosition.Line = this.CurrentPosition.Line;
                             this.LastPosition.Column = this.CurrentPosition.Column;
@@ -404,6 +398,24 @@ namespace Trash_Collector_Agent.src
             int absoluteY = Math.Abs(elem1.Column - elem2.Column);
 
             return absoluteX + absoluteY;
+        }
+
+        private void locateNearestTrashAndCleanTrash()
+        {
+            Node begin = new Node(this.CurrentPosition.Line, this.CurrentPosition.Column);
+            Position nearestTrash = this.calculateNearestTrash(this.CurrentPosition);
+            Node end = new Node(nearestTrash.Line, nearestTrash.Column);
+            Node target;
+            target = aStar.PathFindAStar(environment, begin, end);
+            List<Node> listFathers = environment.createFatherList(target);
+            List<Node> cloneListFathers = listFathers.ToList<Node>();
+            Console.WriteLine("Going to trashDeposit located in [{0}][{1}]", end.XY.Line, end.XY.Column);
+            Console.WriteLine("Current internal trash capacity: {0}", this.currentInternalTrash);
+            environment.moveAgentAroundEnvironment(this, listFathers, target);
+            this.cleanInternalTrash();
+            cloneListFathers.Reverse();
+            Console.WriteLine("Returning from trashDeposit located in [{0}][{1}]", end.XY.Line, end.XY.Column);
+            environment.moveAgentAroundEnvironment(this, cloneListFathers, target);
         }
     }
 }

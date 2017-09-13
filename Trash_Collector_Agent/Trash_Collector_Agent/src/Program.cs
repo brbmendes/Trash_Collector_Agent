@@ -55,10 +55,10 @@ namespace Trash_Collector_Agent.src
             Agent robot;
             Node destinyNode;
             Astar aStar;
-            int size = 18;
-            int qtdTrashDeposits = 3;
-            int percentDirty = 15;
-            int internalTrash = 4;
+            int size = 12;
+            int qtdTrashDeposits = 8;
+            int percentDirty = 40;
+            int internalTrash = 8;
             #endregion
 
             #region INSTANCIAÇÃO DO AGENTE
@@ -87,12 +87,13 @@ namespace Trash_Collector_Agent.src
             robot.aStar = aStar;
 
             env.showEnvironment();
+            Console.ReadKey();
             #endregion
 
 
             #region EXECUTA A*
             //// A* que limpa ambiente
-            robot.clean(env.Map);
+            robot.clean();
 
             //// A* só move
             //destinyNode = robot.move();
