@@ -11,29 +11,17 @@ namespace Trash_Collector_Agent.src
     /// </summary>
     class Wall
     {
-        int positionX { get; set; }
-        int positionY { get; set; }
+        public Position XY { get; set; }
 
 
-        public Wall(int positionX, int positionY)
+        public Wall(Position position)
         {
-            this.positionX = positionX;
-            this.positionY = positionY;
-        }
-
-        public Int32 getX()
-        {
-            return this.positionX;
-        }
-
-        public Int32 getY()
-        {
-            return this.positionY;
+            this.XY = new Position(position.Line, position.Column);
         }
 
         public void showPosition()
         {
-            Console.WriteLine(String.Format("[{0},{1}]", this.positionX, this.positionY));
+            Console.WriteLine(String.Format("[{0},{1}]", this.XY.Line, this.XY.Column));
         }
     }
 }

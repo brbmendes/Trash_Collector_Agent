@@ -8,218 +8,176 @@ namespace Trash_Collector_Agent.src
 {
     class Node
     {
-        public String id { get; set; }
-        public Int32 numNeighbors;
-        public Int32 line { get; set; }
-        public Int32 column { get; set; }
+        public Position XY { get; set; }
+        public String Id { get; set; }
+        public Int32 Line { get; set; }
+        public Int32 Column { get; set; }
         public Int32 Fcost;
         public Int32 Gcost;
         public Int32 Hcost;
-        public Node father { get; set; }
-        public List<Node> neighbors { get; set; }
+        public Node Father { get; set; }
+        public List<Node> Neighbors { get; set; }
 
-        public Node(Int32 line, Int32 column)
+        public Node(Int32 Line, Int32 column)
         {
-            this.line = line;
-            this.column = column;
-            this.father = null;
+            this.XY = new Position(Line, Column);
+            this.Father = null;
             this.Fcost = 0;
             this.Gcost = 0;
             this.Hcost = 0;
-            this.id = String.Format("[{0},{1}]", line, column);
+            this.Id = String.Format("[{0},{1}]", Line, column);
         }
 
-        public void initializeNeighbors(String[,] map)
+        public Node(Position position)
         {
-            Int32 lineActualNode = this.line;
-            Int32 columnActualNode = this.column;
-            this.neighbors = new List<Node>();
+            this.XY.Line = position.Line;
+            this.XY.Column = position.Column;
+            this.Father = null;
+            this.Fcost = 0;
+            this.Gcost = 0;
+            this.Hcost = 0;
+            this.Id = String.Format("[{0},{1}]", this.XY.Line, this.XY.Column);
+        }
 
-            if (lineActualNode == 0)
+        public void initializeNeighbors(Environment environment)
+        {
+            this.Neighbors = new List<Node>();
+
+            if (this.XY.Line == 0)
             {
-                if (columnActualNode == 0)
+                if (this.XY.Column == 0)
                 {
-                    //if (Espaco.sala[lineActualNode][columnActualNode + 1] == '-') {
-                    Node east = new Node(lineActualNode, columnActualNode + 1);
-                    neighbors.Add(east);
-                    //}
-                    //if (Espaco.sala[lineActualNode + 1][columnActualNode] == '-') {
-                    Node south = new Node(lineActualNode + 1, columnActualNode);
-                    neighbors.Add(south);
-                    //}
-                    //if (Espaco.sala[lineActualNode + 1][columnActualNode + 1] == '-') {
-                    Node southEast = new Node(lineActualNode + 1, columnActualNode + 1);
-                    neighbors.Add(southEast);
-                    //}
+                    Node east = new Node(this.XY.Line, this.XY.Column + 1);
+                    Neighbors.Add(east);
+
+                    Node south = new Node(this.XY.Line + 1, this.XY.Column);
+                    Neighbors.Add(south);
+
+                    Node southEast = new Node(this.XY.Line + 1, this.XY.Column + 1);
+                    Neighbors.Add(southEast);
                 }
-                else if (columnActualNode == Environment.sizeEnv - 1)
+                else if (this.XY.Column == environment.Size - 1)
                 {
-                    //if (Espaco.sala[lineActualNode][columnActualNode - 1] == '-') {
-                    Node oeste = new Node(lineActualNode, columnActualNode - 1);
-                    neighbors.Add(oeste);
-                    //}
-                    //if (Espaco.sala[lineActualNode + 1][columnActualNode] == '-') {
-                    Node sul = new Node(lineActualNode + 1, columnActualNode);
-                    neighbors.Add(sul);
-                    //}
-                    //if (Espaco.sala[lineActualNode + 1][columnActualNode - 1] == '-') {
-                    Node sudoeste = new Node(lineActualNode + 1, columnActualNode - 1);
-                    neighbors.Add(sudoeste);
-                    //}
+                    Node oeste = new Node(this.XY.Line, this.XY.Column - 1);
+                    Neighbors.Add(oeste);
+
+                    Node sul = new Node(this.XY.Line + 1, this.XY.Column);
+                    Neighbors.Add(sul);
+
+                    Node sudoeste = new Node(this.XY.Line + 1, this.XY.Column - 1);
+                    Neighbors.Add(sudoeste);
                 }
                 else
                 {
-                    //if (Espaco.sala[lineActualNode + 1][columnActualNode] == '-') {
-                    Node sul = new Node(lineActualNode + 1, columnActualNode);
-                    neighbors.Add(sul);
-                    //}
-                    //if (Espaco.sala[lineActualNode + 1][columnActualNode + 1] == '-') {
-                    Node sudeste = new Node(lineActualNode + 1, columnActualNode + 1);
-                    neighbors.Add(sudeste);
-                    //}
-                    //if (Espaco.sala[lineActualNode + 1][columnActualNode - 1] == '-') {
-                    Node sudoeste = new Node(lineActualNode + 1, columnActualNode - 1);
-                    neighbors.Add(sudoeste);
-                    //}
+                    Node sul = new Node(this.XY.Line + 1, this.XY.Column);
+                    Neighbors.Add(sul);
+                    
+                    Node sudeste = new Node(this.XY.Line + 1, this.XY.Column + 1);
+                    Neighbors.Add(sudeste);
+
+                    Node sudoeste = new Node(this.XY.Line + 1, this.XY.Column - 1);
+                    Neighbors.Add(sudoeste);
                 }
             }
-            else if (lineActualNode == Environment.sizeEnv - 1)
+            else if (this.XY.Line == environment.Size - 1)
             {
-                if (columnActualNode == 0)
+                if (this.XY.Column == 0)
                 {
-                    //if (Espaco.sala[lineActualNode - 1][columnActualNode] == '-') {
-                    Node norte = new Node(lineActualNode - 1, columnActualNode);
-                    neighbors.Add(norte);
-                    //}
-                    //if (Espaco.sala[lineActualNode][columnActualNode + 1] == '-') {
-                    Node leste = new Node(lineActualNode, columnActualNode + 1);
-                    neighbors.Add(leste);
-                    //}
-                    //if (Espaco.sala[lineActualNode - 1][columnActualNode + 1] == '-') {
-                    Node nordeste = new Node(lineActualNode - 1, columnActualNode + 1);
-                    neighbors.Add(nordeste);
-                    //}
+                    Node norte = new Node(this.XY.Line - 1, this.XY.Column);
+                    Neighbors.Add(norte);
+
+                    Node leste = new Node(this.XY.Line, this.XY.Column + 1);
+                    Neighbors.Add(leste);
+
+                    Node nordeste = new Node(this.XY.Line - 1, this.XY.Column + 1);
+                    Neighbors.Add(nordeste);
                 }
-                else if (columnActualNode == Environment.sizeEnv - 1)
+                else if (this.XY.Column == environment.Size - 1)
                 {
-                    //if (Espaco.sala[lineActualNode - 1][columnActualNode] == '-') {
-                    Node norte = new Node(lineActualNode - 1, columnActualNode);
-                    neighbors.Add(norte);
-                    //}
-                    //if (Espaco.sala[lineActualNode][columnActualNode - 1] == '-') {
-                    Node oeste = new Node(lineActualNode, columnActualNode - 1);
-                    neighbors.Add(oeste);
-                    //}
-                    //if (Espaco.sala[lineActualNode - 1][columnActualNode - 1] == '-') {
-                    Node noroeste = new Node(lineActualNode - 1, columnActualNode - 1);
-                    neighbors.Add(noroeste);
-                    //}
+                    Node norte = new Node(this.XY.Line - 1, this.XY.Column);
+                    Neighbors.Add(norte);
+
+                    Node oeste = new Node(this.XY.Line, this.XY.Column - 1);
+                    Neighbors.Add(oeste);
+
+                    Node noroeste = new Node(this.XY.Line - 1, this.XY.Column - 1);
+                    Neighbors.Add(noroeste);
                 }
                 else
                 {
-                    //if (Espaco.sala[lineActualNode - 1][columnActualNode] == '-') {
-                    Node norte = new Node(lineActualNode - 1, columnActualNode);
-                    neighbors.Add(norte);
-                    //}
-                    //if (Espaco.sala[lineActualNode - 1][columnActualNode + 1] == '-') {
-                    Node nordeste = new Node(lineActualNode - 1, columnActualNode + 1);
-                    neighbors.Add(nordeste);
-                    //}
-                    //if (Espaco.sala[lineActualNode - 1][columnActualNode - 1] == '-') {
-                    Node noroeste = new Node(lineActualNode - 1, columnActualNode - 1);
-                    neighbors.Add(noroeste);
-                    //}
+                    Node norte = new Node(this.XY.Line - 1, this.XY.Column);
+                    Neighbors.Add(norte);
+
+                    Node nordeste = new Node(this.XY.Line - 1, this.XY.Column + 1);
+                    Neighbors.Add(nordeste);
+
+                    Node noroeste = new Node(this.XY.Line - 1, this.XY.Column - 1);
+                    Neighbors.Add(noroeste);
                 }
             }
             else
             {
-                if (columnActualNode == 0)
+                if (this.XY.Column == 0)
                 {
-                    //if (Espaco.sala[lineActualNode - 1][columnActualNode] == '-') {
-                    Node norte = new Node(lineActualNode - 1, columnActualNode);
-                    neighbors.Add(norte);
-                    //}
-                    //if (Espaco.sala[lineActualNode + 1][columnActualNode] == '-') {
-                    Node sul = new Node(lineActualNode + 1, columnActualNode);
-                    neighbors.Add(sul);
-                    //}
-                    //if (Espaco.sala[lineActualNode][columnActualNode + 1] == '-') {
-                    Node leste = new Node(lineActualNode, columnActualNode + 1);
-                    neighbors.Add(leste);
-                    //}
-                    //if (Espaco.sala[lineActualNode - 1][columnActualNode + 1] == '-') {
-                    Node nordeste = new Node(lineActualNode - 1, columnActualNode + 1);
-                    neighbors.Add(nordeste);
-                    //}
-                    //if (Espaco.sala[lineActualNode + 1][columnActualNode + 1] == '-') {
-                    Node sudeste = new Node(lineActualNode + 1, columnActualNode + 1);
-                    neighbors.Add(sudeste);
-                    //}
+                    Node norte = new Node(this.XY.Line - 1, this.XY.Column);
+                    Neighbors.Add(norte);
+
+                    Node sul = new Node(this.XY.Line + 1, this.XY.Column);
+                    Neighbors.Add(sul);
+
+                    Node leste = new Node(this.XY.Line, this.XY.Column + 1);
+                    Neighbors.Add(leste);
+
+                    Node nordeste = new Node(this.XY.Line - 1, this.XY.Column + 1);
+                    Neighbors.Add(nordeste);
+
+                    Node sudeste = new Node(this.XY.Line + 1, this.XY.Column + 1);
+                    Neighbors.Add(sudeste);
                 }
-                else if (columnActualNode == Environment.sizeEnv - 1)
+                else if (this.XY.Column == environment.Size - 1)
                 {
-                    //if (Espaco.sala[lineActualNode - 1][columnActualNode] == '-') {
-                    Node norte = new Node(lineActualNode - 1, columnActualNode);
-                    neighbors.Add(norte);
-                    //}
-                    //if (Espaco.sala[lineActualNode + 1][columnActualNode] == '-') {
-                    Node sul = new Node(lineActualNode + 1, columnActualNode);
-                    neighbors.Add(sul);
-                    //}
-                    //if (Espaco.sala[lineActualNode][columnActualNode - 1] == '-') {
-                    Node oeste = new Node(lineActualNode, columnActualNode - 1);
-                    neighbors.Add(oeste);
-                    //}
-                    //if (Espaco.sala[lineActualNode - 1][columnActualNode - 1] == '-') {
-                    Node noroeste = new Node(lineActualNode - 1, columnActualNode - 1);
-                    neighbors.Add(noroeste);
-                    //}
-                    //if (Espaco.sala[lineActualNode + 1][columnActualNode - 1] == '-') {
-                    Node sudoeste = new Node(lineActualNode + 1, columnActualNode - 1);
-                    neighbors.Add(sudoeste);
-                    //}
+                    Node norte = new Node(this.XY.Line - 1, this.XY.Column);
+                    Neighbors.Add(norte);
+
+                    Node sul = new Node(this.XY.Line + 1, this.XY.Column);
+                    Neighbors.Add(sul);
+
+                    Node oeste = new Node(this.XY.Line, this.XY.Column - 1);
+                    Neighbors.Add(oeste);
+
+                    Node noroeste = new Node(this.XY.Line - 1, this.XY.Column - 1);
+                    Neighbors.Add(noroeste);
+
+                    Node sudoeste = new Node(this.XY.Line + 1, this.XY.Column - 1);
+                    Neighbors.Add(sudoeste);
                 }
                 else
                 {
-                    //if (Espaco.sala[lineActualNode - 1][columnActualNode] == '-') {
-                    Node norte = new Node(lineActualNode - 1, columnActualNode);
-                    neighbors.Add(norte);
-                    //}
-                    //if (Espaco.sala[lineActualNode + 1][columnActualNode] == '-') {
-                    Node sul = new Node(lineActualNode + 1, columnActualNode);
-                    neighbors.Add(sul);
-                    //}
-                    //if (Espaco.sala[lineActualNode][columnActualNode + 1] == '-') {
-                    Node leste = new Node(lineActualNode, columnActualNode + 1);
-                    neighbors.Add(leste);
-                    //}
-                    //if (Espaco.sala[lineActualNode][columnActualNode - 1] == '-') {
-                    Node oeste = new Node(lineActualNode, columnActualNode - 1);
-                    neighbors.Add(oeste);
-                    //}
-                    //if (Espaco.sala[lineActualNode - 1][columnActualNode + 1] == '-') {
-                    Node nordeste = new Node(lineActualNode - 1, columnActualNode + 1);
-                    neighbors.Add(nordeste);
-                    //}
-                    //if (Espaco.sala[lineActualNode - 1][columnActualNode - 1] == '-') {
-                    Node noroeste = new Node(lineActualNode - 1, columnActualNode - 1);
-                    neighbors.Add(noroeste);
-                    //}
-                    //if (Espaco.sala[lineActualNode + 1][columnActualNode + 1] == '-') {
-                    Node sudeste = new Node(lineActualNode + 1, columnActualNode + 1);
-                    neighbors.Add(sudeste);
-                    //}
-                    //if (Espaco.sala[lineActualNode + 1][columnActualNode - 1] == '-') {
-                    Node sudoeste = new Node(lineActualNode + 1, columnActualNode - 1);
-                    neighbors.Add(sudoeste);
-                    //}
+                    Node norte = new Node(this.XY.Line - 1, this.XY.Column);
+                    Neighbors.Add(norte);
+
+                    Node sul = new Node(this.XY.Line + 1, this.XY.Column);
+                    Neighbors.Add(sul);
+
+                    Node leste = new Node(this.XY.Line, this.XY.Column + 1);
+                    Neighbors.Add(leste);
+
+                    Node oeste = new Node(this.XY.Line, this.XY.Column - 1);
+                    Neighbors.Add(oeste);
+
+                    Node nordeste = new Node(this.XY.Line - 1, this.XY.Column + 1);
+                    Neighbors.Add(nordeste);
+
+                    Node noroeste = new Node(this.XY.Line - 1, this.XY.Column - 1);
+                    Neighbors.Add(noroeste);
+
+                    Node sudeste = new Node(this.XY.Line + 1, this.XY.Column + 1);
+                    Neighbors.Add(sudeste);
+
+                    Node sudoeste = new Node(this.XY.Line + 1, this.XY.Column - 1);
+                    Neighbors.Add(sudoeste);
                 }
             }
-        }
-
-        public void setNumNeighbors()
-        {
-            this.numNeighbors = this.neighbors.Count;
         }
 
         public void calculateFCost()
@@ -227,20 +185,30 @@ namespace Trash_Collector_Agent.src
             this.Fcost = this.Gcost + this.Hcost;
         }
 
+        public Int32 getFCost()
+        {
+            return this.Fcost;
+        }
+
         public void calculateGCost(Node father, Int32 movementCost)
         {
             this.Gcost = father.Gcost + movementCost;
         }
 
-        public void calculateGCost(Int32 Gcost)
+        public Int32 getGCost()
+        {
+            return this.Gcost;
+        }
+
+        public void setGCost(Int32 Gcost)
         {
             this.Gcost = Gcost;
         }
 
         public void calculateHCost(Node begin, Node end)
         {
-            Int32 absoluteX = Math.Abs(begin.line - end.line);
-            Int32 absoluteY = Math.Abs(begin.column - end.column);
+            Int32 absoluteX = Math.Abs(begin.Line - end.Line);
+            Int32 absoluteY = Math.Abs(begin.Column - end.Column);
 
             if(absoluteX > absoluteY)
             {
@@ -252,10 +220,12 @@ namespace Trash_Collector_Agent.src
             }
         }
 
-        public Int32 getFCost()
+        public Int32 getHCost()
         {
-            return this.Fcost;
+            return this.Hcost;
         }
+
+        
 
 
     }

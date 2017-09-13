@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Trash_Collector_Agent.src
 {
-    class Position
+    public class Position
     {
         public Int32 Line { get; set; }
         public Int32 Column { get; set; }

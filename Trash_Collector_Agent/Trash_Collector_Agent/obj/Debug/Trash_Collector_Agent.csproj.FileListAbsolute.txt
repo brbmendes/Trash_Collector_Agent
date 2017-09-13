@@ -10,3 +10,9 @@ D:\Desenvolvimento\Github\Trash_Collector_Agent\Trash_Collector_Agent\Trash_Coll
 D:\Desenvolvimento\Github\Trash_Collector_Agent\Trash_Collector_Agent\Trash_Collector_Agent\bin\Debug\Trash_Collector_Agent.exe
 D:\Desenvolvimento\Github\Trash_Collector_Agent\Trash_Collector_Agent\Trash_Collector_Agent\bin\Debug\Trash_Collector_Agent.pdb
 D:\Desenvolvimento\Github\Trash_Collector_Agent\Trash_Collector_Agent\Trash_Collector_Agent\obj\Debug\Trash_Collector_Agent.csprojResolveAssemblyReference.cache
+C:\Users\E26844\Documents\Github\Trash_Collector_Agent\Trash_Collector_Agent\Trash_Collector_Agent\bin\Debug\Trash_Collector_Agent.exe.config
+C:\Users\E26844\Documents\Github\Trash_Collector_Agent\Trash_Collector_Agent\Trash_Collector_Agent\obj\Debug\Trash_Collector_Agent.exe
+C:\Users\E26844\Documents\Github\Trash_Collector_Agent\Trash_Collector_Agent\Trash_Collector_Agent\obj\Debug\Trash_Collector_Agent.pdb
+C:\Users\E26844\Documents\Github\Trash_Collector_Agent\Trash_Collector_Agent\Trash_Collector_Agent\obj\Debug\Trash_Collector_Agent.csprojResolveAssemblyReference.cache
+C:\Users\E26844\Documents\Github\Trash_Collector_Agent\Trash_Collector_Agent\Trash_Collector_Agent\bin\Debug\Trash_Collector_Agent.exe
+C:\Users\E26844\Documents\Github\Trash_Collector_Agent\Trash_Collector_Agent\Trash_Collector_Agent\bin\Debug\Trash_Collector_Agent.pdb

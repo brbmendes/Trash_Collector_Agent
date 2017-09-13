@@ -49,7 +49,6 @@
     <Compile Include="src\Position.cs" />
     <Compile Include="src\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="src\Recharger.cs" />
     <Compile Include="src\Trash_deposit.cs" />
     <Compile Include="src\Wall.cs" />
   </ItemGroup>

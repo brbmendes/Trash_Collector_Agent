@@ -8,14 +8,20 @@ namespace Trash_Collector_Agent.src
 {
     class Astar
     {
+        private Environment env { get; set; }
         //private String[,] map;
-        private static List<Node> openList;
-        private static List<Node> closedList;
-        private static Dictionary<String, Node> initializedNodes;
+        private List<Node> openList;
+        private List<Node> closedList;
+        private Dictionary<String, Node> initializedNodes;
+
+        public Astar(Environment environment)
+        {
+            this.env = environment;
+        }
 
         // True se encontrou o caminho
         // False otherwise
-        public static Node PathFindAStar(String[,] map, Node begin, Node end)
+        public Node PathFindAStar(String[,] map, Node begin, Node end)
         {
             //this.map = map;
             Int32 movementCost = 10;
@@ -50,36 +56,36 @@ namespace Trash_Collector_Agent.src
                 closedList.Add(current);
 
                 // Verifica se o current é o destino
-                if (current.line == end.line && current.column == end.column)
+                if (current.Line == end.Line && current.Column == end.Column)
                 {
                     return current;
                 }
 
                 // Inicializa e carrega os vizinhos
-                current.initializeNeighbors(map);
+                current.initializeNeighbors(env);
 
                 // verifica se o vizinho já foi inicializado. se já foi, copia os valores para o vizinho atual.
-                foreach (Node initialized in current.neighbors)
+                foreach (Node initialized in current.Neighbors)
                 {
-                    if (initializedNodes.ContainsKey(initialized.id))
+                    if (initializedNodes.ContainsKey(initialized.Id))
                     {
                         Node temp;
-                        initializedNodes.TryGetValue(initialized.id, out temp);
+                        initializedNodes.TryGetValue(initialized.Id, out temp);
                         copyValues(temp, initialized);
                     }
                 }
 
 
                 // processa todos os nós vizinhos
-                foreach (Node neighbor in current.neighbors)
+                foreach (Node neighbor in current.Neighbors)
                 {
                     Boolean estaNaListaFechada = false;
                     Boolean ehParedeOuSujeira = false;
                     // se o vizinho é parede ou sujeira, ou seja, está bloqueado
                     // Tudo que não for "-" é caminho bloqueado, exceto se for o nodo destino.
-                        if (map[neighbor.line, neighbor.column].ToString().Trim() == "#" || map[neighbor.line, neighbor.column].ToString().Trim() == "D" || map[neighbor.line, neighbor.column].ToString().Trim() == "R" || map[neighbor.line, neighbor.column].ToString().Trim() == "T")
+                        if (map[neighbor.Line, neighbor.Column].ToString().Trim() == "#" || map[neighbor.Line, neighbor.Column].ToString().Trim() == "D" || map[neighbor.Line, neighbor.Column].ToString().Trim() == "R" || map[neighbor.Line, neighbor.Column].ToString().Trim() == "T")
                     {
-                            if(end.line == neighbor.line && end.column == neighbor.column){
+                            if(end.Line == neighbor.Line && end.Column == neighbor.Column){
                                 // Se o vizinho for o destino, não faz nada.
                             } else {
                                 ehParedeOuSujeira = true;
@@ -87,7 +93,7 @@ namespace Trash_Collector_Agent.src
                     }
 
                     // se o vizinho está na lista fechada
-                    if (closedList.Any(item => item.id == neighbor.id))
+                    if (closedList.Any(item => item.Id == neighbor.Id))
                     {
                         // muda flag estaNaListaFechada
                         estaNaListaFechada = true;
@@ -100,33 +106,33 @@ namespace Trash_Collector_Agent.src
                     else
                     {
                         // Calcula custo de moviment ( muda para 14 se estiver na diagonal )
-                        if (current.line != neighbor.line && current.column != neighbor.column)
+                        if (current.Line != neighbor.Line && current.Column != neighbor.Column)
                         {
                             movementCost = 14;
                         }
                             // se o vizinho está na lista aberta, tenta melhorar o caminho até ele através do atual
-                            if (openList.Any(item => item.id == neighbor.id))
+                            if (openList.Any(item => item.Id == neighbor.Id))
                             {
 
                                 Int32 betterGCost = current.Gcost + movementCost;
                                 if (betterGCost < neighbor.Gcost)
                                 {
-                                    neighbor.father = current;
-                                    neighbor.calculateGCost(betterGCost);
+                                    neighbor.Father = current;
+                                    neighbor.setGCost(betterGCost);
                                     neighbor.calculateFCost();
                                 }
                             }
                             else // se ele chegou aqui, é porque não está na lista aberta.
                             {
-                                neighbor.father = current;
-                                neighbor.calculateGCost(current.Gcost + movementCost);
+                                neighbor.Father = current;
+                                neighbor.setGCost(current.Gcost + movementCost);
                                 neighbor.calculateHCost(neighbor, end);
                                 neighbor.calculateFCost();
                                 openList.Add(neighbor);
                             }
-                            if (!initializedNodes.ContainsKey(neighbor.id))
+                            if (!initializedNodes.ContainsKey(neighbor.Id))
                             {
-                                initializedNodes.Add(neighbor.id, neighbor);
+                                initializedNodes.Add(neighbor.Id, neighbor);
                             }
                         //}
 
@@ -136,13 +142,138 @@ namespace Trash_Collector_Agent.src
             }
         }
 
+        public Node PathFindAStar(Environment env, Node begin, Node end)
+        {
+            //this.map = map;
+            Int32 movementCost = 10;
+            openList = new List<Node>();
+            closedList = new List<Node>();
+            initializedNodes = new Dictionary<string, Node>();
+
+            // Calculate HCost
+            begin.calculateHCost(begin, end);
+
+            openList.Add(begin);
+
+
+            while (true)
+            {
+                // se a lista aberta estiver vazia, não pudemos encontrar um caminho
+                if (openList.Count == 0)
+                {
+                    Console.WriteLine("Caminho não encontrado.");
+                    return null;
+                }
+
+                // ordena lista
+                openList = openList.OrderBy(item => item.getFCost()).ToList();
+
+
+                // pega o nó com menor custo F da lista
+                Node current = openList.First();
+                openList.Remove(current);
+
+                // adiciona na lista fechada.
+                closedList.Add(current);
+
+                // Verifica se o current é o destino
+                if (current.Line == end.Line && current.Column == end.Column)
+                {
+                    return current;
+                }
+
+                // Inicializa e carrega os vizinhos
+                current.initializeNeighbors(env);
+
+                // verifica se o vizinho já foi inicializado. se já foi, copia os valores para o vizinho atual.
+                foreach (Node initialized in current.Neighbors)
+                {
+                    if (initializedNodes.ContainsKey(initialized.Id))
+                    {
+                        Node temp;
+                        initializedNodes.TryGetValue(initialized.Id, out temp);
+                        copyValues(temp, initialized);
+                    }
+                }
+
+
+                // processa todos os nós vizinhos
+                foreach (Node neighbor in current.Neighbors)
+                {
+                    Boolean estaNaListaFechada = false;
+                    Boolean ehParedeOuSujeira = false;
+                    // se o vizinho é parede ou sujeira, ou seja, está bloqueado
+                    // Tudo que não for "-" é caminho bloqueado, exceto se for o nodo destino.
+                    if (env.Map[neighbor.Line, neighbor.Column] == "#" 
+                        || env.Map[neighbor.Line, neighbor.Column] == "D" 
+                        || env.Map[neighbor.Line, neighbor.Column] == "R"
+                        || env.Map[neighbor.Line, neighbor.Column] == "T")
+                    {
+                        if (end.Line == neighbor.Line && end.Column == neighbor.Column)
+                        {
+                            // Se o vizinho for o destino, não faz nada.
+                        }
+                        else
+                        {
+                            ehParedeOuSujeira = true;
+                        }
+                    }
+
+                    // se o vizinho está na lista fechada
+                    if (closedList.Any(item => item.Id == neighbor.Id))
+                    {
+                        // muda flag estaNaListaFechada
+                        estaNaListaFechada = true;
+                    }
+
+                    if (estaNaListaFechada == true || ehParedeOuSujeira == true)
+                    {
+                        // não faz nada e vai para o próximo vizinho.
+                    }
+                    else
+                    {
+                        // Calcula custo de moviment ( muda para 14 se estiver na diagonal )
+                        if (current.Line != neighbor.Line && current.Column != neighbor.Column)
+                        {
+                            movementCost = 14;
+                        }
+                        // se o vizinho está na lista aberta, tenta melhorar o caminho até ele através do atual
+                        if (openList.Any(item => item.Id == neighbor.Id))
+                        {
+
+                            Int32 betterGCost = current.Gcost + movementCost;
+                            if (betterGCost < neighbor.Gcost)
+                            {
+                                neighbor.Father = current;
+                                neighbor.setGCost(betterGCost);
+                                neighbor.calculateFCost();
+                            }
+                        }
+                        else // se ele chegou aqui, é porque não está na lista aberta.
+                        {
+                            neighbor.Father = current;
+                            neighbor.setGCost(current.Gcost + movementCost);
+                            neighbor.calculateHCost(neighbor, end);
+                            neighbor.calculateFCost();
+                            openList.Add(neighbor);
+                        }
+                        if (!initializedNodes.ContainsKey(neighbor.Id))
+                        {
+                            initializedNodes.Add(neighbor.Id, neighbor);
+                        }
+                    }
+
+                }
+            }
+        }
+
         private static void copyValues(Node source, Node destiny)
         {
-            destiny.father = source.father;
+            destiny.Father = source.Father;
             destiny.Fcost = source.Fcost;
             destiny.Gcost = source.Gcost;
             destiny.Hcost = source.Hcost;
-            destiny.neighbors = source.neighbors;
+            destiny.Neighbors = source.Neighbors;
         }
     }
 }
