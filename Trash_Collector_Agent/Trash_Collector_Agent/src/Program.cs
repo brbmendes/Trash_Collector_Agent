@@ -92,19 +92,19 @@ namespace Trash_Collector_Agent.src
 
             #region EXECUTA A*
             //// A* que limpa ambiente
-            ////env.agent.clean(env.map);
+            robot.clean(env.Map);
 
-            // A* só move
-            destinyNode = robot.move();
-            List<Node> listFathers = env.createFatherList(destinyNode);
-            List<Node> listFathersReturning = listFathers.ToList();
-            listFathersReturning.Reverse(); // Inverte para voltar ao nodo inicial.
-            env.moveAgentAroundEnvironment(robot, listFathers, destinyNode);
-            Program.breakLines();
-            Console.WriteLine("Agente está retornando para posição inicial.");
-            destinyNode = listFathersReturning.Last();
-            env.moveAgentAroundEnvironment(robot, listFathersReturning, destinyNode);
-            Program.breakLines();
+            //// A* só move
+            //destinyNode = robot.move();
+            //List<Node> listFathers = env.createFatherList(destinyNode);
+            //List<Node> listFathersReturning = listFathers.ToList();
+            //listFathersReturning.Reverse(); // Inverte para voltar ao nodo inicial.
+            //env.moveAgentAroundEnvironment(robot, listFathers, destinyNode);
+            //Program.breakLines();
+            //Console.WriteLine("Agente está retornando para posição inicial.");
+            //destinyNode = listFathersReturning.Last();
+            //env.moveAgentAroundEnvironment(robot, listFathersReturning, destinyNode);
+            //Program.breakLines();
             #endregion
 
             Console.ReadKey();

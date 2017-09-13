@@ -194,9 +194,9 @@ namespace Trash_Collector_Agent.src
                         {
                             
                             this.collectTrash();
-                            this.LastPosition.Line = this.CurrentPosition.Line;
-                            this.LastPosition.Column = this.CurrentPosition.Column;
-                            this.CurrentPosition.Column += 1;
+                            this.updateLastPosition(this.CurrentPosition);
+                            Position pos = new Position(this.CurrentPosition.Line, this.CurrentPosition.Column + 1);
+                            this.updateCurrentPosition(pos);
                         }
                         else if (map.GetValue(CurrentPosition.Line, CurrentPosition.Column + 1).ToString().Trim() == "D" && this.currentInternalTrash == 0) // se for sujeira e estiver cheio
                         {
@@ -216,16 +216,15 @@ namespace Trash_Collector_Agent.src
                             Console.WriteLine("Current internal trash capacity: {0}", this.currentInternalTrash);
                             environment.moveAgentAroundEnvironment(this, cloneListFathers, destinyNode);
                             this.collectTrash();
-                            this.LastPosition.Line = this.CurrentPosition.Line;
-                            this.LastPosition.Column = this.CurrentPosition.Column;
-                            this.CurrentPosition.Column += 1;
-                            //Console.ReadKey();
+                            this.updateLastPosition(this.CurrentPosition);
+                            Position pos = new Position(this.CurrentPosition.Line, this.CurrentPosition.Column + 1);
+                            this.updateCurrentPosition(pos);
                         }
                         else // não é sujeira
                         {
-                            this.LastPosition.Line = this.CurrentPosition.Line;
-                            this.LastPosition.Column = this.CurrentPosition.Column;
-                            this.CurrentPosition.Column += 1;
+                            this.updateLastPosition(this.CurrentPosition);
+                            Position pos = new Position(this.CurrentPosition.Line, this.CurrentPosition.Column + 1);
+                            this.updateCurrentPosition(pos);
                         }
                         
                         
@@ -327,7 +326,7 @@ namespace Trash_Collector_Agent.src
                         //this.CurrentPosition.Column -= 1;
                     }                
                 }
-                environment.positioningAgent(this);
+                environment.printAgent(this);
                 Console.WriteLine("\n");
             }
         }
