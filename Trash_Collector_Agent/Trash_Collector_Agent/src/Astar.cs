@@ -56,7 +56,7 @@ namespace Trash_Collector_Agent.src
                 closedList.Add(current);
 
                 // Verifica se o current é o destino
-                if (current.Line == end.Line && current.Column == end.Column)
+                if (current.XY.Line == end.XY.Line && current.XY.Column == end.XY.Column)
                 {
                     return current;
                 }
@@ -83,9 +83,10 @@ namespace Trash_Collector_Agent.src
                     Boolean ehParedeOuSujeira = false;
                     // se o vizinho é parede ou sujeira, ou seja, está bloqueado
                     // Tudo que não for "-" é caminho bloqueado, exceto se for o nodo destino.
-                        if (map[neighbor.Line, neighbor.Column].ToString().Trim() == "#" || map[neighbor.Line, neighbor.Column].ToString().Trim() == "D" || map[neighbor.Line, neighbor.Column].ToString().Trim() == "R" || map[neighbor.Line, neighbor.Column].ToString().Trim() == "T")
+                    if (map[neighbor.XY.Line, neighbor.XY.Column].ToString().Trim() == "#" || map[neighbor.XY.Line, neighbor.XY.Column].ToString().Trim() == "D" || map[neighbor.XY.Line, neighbor.XY.Column].ToString().Trim() == "R" || map[neighbor.XY.Line, neighbor.XY.Column].ToString().Trim() == "T")
                     {
-                            if(end.Line == neighbor.Line && end.Column == neighbor.Column){
+                        if (end.XY.Line == neighbor.XY.Line && end.XY.Column == neighbor.XY.Column)
+                        {
                                 // Se o vizinho for o destino, não faz nada.
                             } else {
                                 ehParedeOuSujeira = true;
@@ -106,7 +107,7 @@ namespace Trash_Collector_Agent.src
                     else
                     {
                         // Calcula custo de moviment ( muda para 14 se estiver na diagonal )
-                        if (current.Line != neighbor.Line && current.Column != neighbor.Column)
+                        if (current.XY.Line != neighbor.XY.Line && current.XY.Column != neighbor.XY.Column)
                         {
                             movementCost = 14;
                         }
@@ -177,7 +178,7 @@ namespace Trash_Collector_Agent.src
                 closedList.Add(current);
 
                 // Verifica se o current é o destino
-                if (current.Line == end.Line && current.Column == end.Column)
+                if (current.XY.Line == end.XY.Line && current.XY.Column == end.XY.Column)
                 {
                     return current;
                 }
@@ -204,12 +205,12 @@ namespace Trash_Collector_Agent.src
                     Boolean ehParedeOuSujeira = false;
                     // se o vizinho é parede ou sujeira, ou seja, está bloqueado
                     // Tudo que não for "-" é caminho bloqueado, exceto se for o nodo destino.
-                    if (env.Map[neighbor.Line, neighbor.Column] == "#" 
-                        || env.Map[neighbor.Line, neighbor.Column] == "D" 
-                        || env.Map[neighbor.Line, neighbor.Column] == "R"
-                        || env.Map[neighbor.Line, neighbor.Column] == "T")
+                    if (env.Map[neighbor.XY.Line, neighbor.XY.Column] == "#"
+                        || env.Map[neighbor.XY.Line, neighbor.XY.Column] == "D"
+                        || env.Map[neighbor.XY.Line, neighbor.XY.Column] == "R"
+                        || env.Map[neighbor.XY.Line, neighbor.XY.Column] == "T")
                     {
-                        if (end.Line == neighbor.Line && end.Column == neighbor.Column)
+                        if (end.XY.Line == neighbor.XY.Line && end.XY.Column == neighbor.XY.Column)
                         {
                             // Se o vizinho for o destino, não faz nada.
                         }
@@ -233,7 +234,7 @@ namespace Trash_Collector_Agent.src
                     else
                     {
                         // Calcula custo de moviment ( muda para 14 se estiver na diagonal )
-                        if (current.Line != neighbor.Line && current.Column != neighbor.Column)
+                        if (current.XY.Line != neighbor.XY.Line && current.XY.Column != neighbor.XY.Column)
                         {
                             movementCost = 14;
                         }

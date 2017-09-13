@@ -359,7 +359,7 @@ namespace Trash_Collector_Agent.src
             //robot.CurrentPosition = new Position(robot.getX(), robot.getY());
             //robot.LastPosition = new Position(robot.getX(), robot.getY());
             Console.WriteLine("Robot current position: \t[{0}][{1}]", robot.CurrentPosition.Line, robot.CurrentPosition.Column);
-            Console.WriteLine("Robot target position: \t[{0}][{1}]", target.Line, target.Column);
+            Console.WriteLine("Robot target position: \t\t[{0}][{1}]", target.XY.Line, target.XY.Column);
 
             listPosition.RemoveAt(0); // remove a primeira posição da lista, pois é a mesma que a posição atual do agente
             int count = 0;
@@ -370,10 +370,11 @@ namespace Trash_Collector_Agent.src
                     Node nextPosition = listPosition.First();
                     listPosition.RemoveAt(0);
                     Boolean hasNextNextPosition = false;
-                    if(listPosition.First() != null)
+                    if(listPosition.Count > 0)
                     {
                         Node nextNextPosition = listPosition.First();
-                        robot.updatePosition(robot.CurrentPosition, nextPosition.XY, nextNextPosition.XY);
+                        Position lastPosition = robot.CurrentPosition;
+                        robot.updatePosition(lastPosition, nextPosition.XY, nextNextPosition.XY);
                         hasNextNextPosition = true;
                     }
                     else
@@ -382,7 +383,7 @@ namespace Trash_Collector_Agent.src
                     }                    
                     //robot.CurrentPosition.Line = temp.Line;
                     //robot.CurrentPosition.Column = temp.Column;
-                    if (nextPosition.Line == target.Line && nextPosition.Column == target.Column)
+                    if (nextPosition.XY.Line == target.XY.Line && nextPosition.XY.Column == target.XY.Column)
                     {
                         Console.WriteLine("\n\n");
                         Console.WriteLine("Agent last position: \t[{0}][{1}]", robot.LastPosition.Line, robot.LastPosition.Column);
@@ -391,7 +392,7 @@ namespace Trash_Collector_Agent.src
                         {
                             Console.WriteLine("Agent next position: \t[{0}][{1}]", robot.NextPosition.Line, robot.NextPosition.Column);
                         }
-                        Console.WriteLine("Agent target: \t[{0}][{1}]", target.Line, target.Column);
+                        Console.WriteLine("Agent target: \t[{0}][{1}]", target.XY.Line, target.XY.Column);
                         this.showEnvironment();
                     }
                     else
@@ -407,7 +408,7 @@ namespace Trash_Collector_Agent.src
                     Node nextPosition = listPosition.First();
                     listPosition.RemoveAt(0);
                     Boolean hasNextNextPosition = false;
-                    if (listPosition.First() != null)
+                    if (listPosition.Count > 0)
                     {
                         Node nextNextPosition = listPosition.First();
                         robot.updatePosition(robot.CurrentPosition, nextPosition.XY, nextNextPosition.XY);
@@ -416,9 +417,9 @@ namespace Trash_Collector_Agent.src
                     else
                     {
                         robot.updatePosition(robot.CurrentPosition, nextPosition.XY);
-                    }         
-   
-                    if(nextPosition.Line == target.Line && nextPosition.Column == target.Column)
+                    }
+
+                    if (nextPosition.XY.Line == target.XY.Line && nextPosition.XY.Column == target.XY.Column)
                     {
                         Console.WriteLine("\n\n");
                         Console.WriteLine("Agent last position: \t[{0}][{1}]", robot.LastPosition.Line, robot.LastPosition.Column);
@@ -427,7 +428,7 @@ namespace Trash_Collector_Agent.src
                         {
                             Console.WriteLine("Agent next position: \t[{0}][{1}]", robot.NextPosition.Line, robot.NextPosition.Column);
                         }
-                        Console.WriteLine("Agent target: \t[{0}][{1}]", target.Line, target.Column);
+                        Console.WriteLine("Agent target: \t[{0}][{1}]", target.XY.Line, target.XY.Column);
                         this.showEnvironment();
                     }
                     else

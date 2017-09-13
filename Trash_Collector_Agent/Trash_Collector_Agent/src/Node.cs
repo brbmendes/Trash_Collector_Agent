@@ -10,22 +10,20 @@ namespace Trash_Collector_Agent.src
     {
         public Position XY { get; set; }
         public String Id { get; set; }
-        public Int32 Line { get; set; }
-        public Int32 Column { get; set; }
         public Int32 Fcost;
         public Int32 Gcost;
         public Int32 Hcost;
         public Node Father { get; set; }
         public List<Node> Neighbors { get; set; }
 
-        public Node(Int32 Line, Int32 column)
+        public Node(Int32 line, Int32 column)
         {
-            this.XY = new Position(Line, Column);
+            this.XY = new Position(line, column);
             this.Father = null;
             this.Fcost = 0;
             this.Gcost = 0;
             this.Hcost = 0;
-            this.Id = String.Format("[{0},{1}]", Line, column);
+            this.Id = String.Format("[{0},{1}]", line, column);
         }
 
         public Node(Position position)
@@ -207,8 +205,8 @@ namespace Trash_Collector_Agent.src
 
         public void calculateHCost(Node begin, Node end)
         {
-            Int32 absoluteX = Math.Abs(begin.Line - end.Line);
-            Int32 absoluteY = Math.Abs(begin.Column - end.Column);
+            Int32 absoluteX = Math.Abs(begin.XY.Line - end.XY.Line);
+            Int32 absoluteY = Math.Abs(begin.XY.Column - end.XY.Column);
 
             if(absoluteX > absoluteY)
             {

@@ -55,14 +55,14 @@ namespace Trash_Collector_Agent.src
             this.NextPosition = pos;
         }
 
-        public void updatePosition(Position currentPosition, Position nextPosition, Position nextNextPosition)
+        public void updatePosition(Position last, Position current, Position next)
         {
-            this.LastPosition.Line = currentPosition.Line;
-            this.LastPosition.Column = currentPosition.Column;
-            this.CurrentPosition.Line = nextPosition.Line;
-            this.CurrentPosition.Column = nextPosition.Column;
-            this.NextPosition.Line = nextNextPosition.Line;
-            this.NextPosition.Column = nextNextPosition.Column;
+            this.LastPosition.Line = last.Line;
+            this.LastPosition.Column = last.Column;
+            this.CurrentPosition.Line = current.Line;
+            this.CurrentPosition.Column = current.Column;
+            this.NextPosition.Line = next.Line;
+            this.NextPosition.Column = next.Column;
         }
 
         public void updatePosition(Position currentPosition, Position nextPosition)
@@ -331,7 +331,7 @@ namespace Trash_Collector_Agent.src
 
 
 
-        public Node move(String[,] map)
+        public Node move()
         {
             #region A* IMPLEMENTADO
 

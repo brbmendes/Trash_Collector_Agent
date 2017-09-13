@@ -19,85 +19,89 @@ namespace Trash_Collector_Agent.src
         static void Main(string[] args)
         {
 
-            // CONSTRUÇÃO DO AMBIENTE EM SEQUÊNCIA, PARA VER SE ESTÁ CRIANDO CERTO.
-            Environment env;
-            Agent robot;
-            Astar aStar;
-            //Node destinyNode;
-            int qtdTrashDeposits = 3;
-            int percentDirty = 15;
-            int internalTrash = 4;
-            for (int i = 12; i < 26; i++)
-            {
-                robot = new Agent(internalTrash);
-                env = new Environment(i, robot, qtdTrashDeposits, percentDirty);
-                Console.WriteLine("Tamanho do ambiente = {0}x{0}", i);
-                Console.WriteLine("Percentual de sujeira no ambiente = {0} %", percentDirty);
-                Console.WriteLine("Lixeiras no ambiente = {0}", qtdTrashDeposits);
-                Console.WriteLine("Lixeira interna agente = {0}", robot.usedInternalTrash());
-                Console.WriteLine("\n");
-                env.initializeMap();
-                env.positioningAgent(robot);
-                env.buildWalls();
-                env.buildTrashDeposits();
-                env.buildDirtyEnvironment();
-
-                robot.environment = env;
-                aStar = new Astar(env);
-                robot.aStar = aStar;
-
-                env.showEnvironment();
-                Program.breakLines();
-            }
-
-            //#region DECLARAÇÃO DE VARIAVEIS
+            //// CONSTRUÇÃO DO AMBIENTE EM SEQUÊNCIA, PARA VER SE ESTÁ CRIANDO CERTO.
             //Environment env;
             //Agent robot;
-            //Node destinyNode;
-            //int size = 18;
+            //Astar aStar;
+            ////Node destinyNode;
             //int qtdTrashDeposits = 3;
             //int percentDirty = 15;
             //int internalTrash = 4;
-            //#endregion
+            //for (int i = 12; i < 26; i++)
+            //{
+            //    robot = new Agent(internalTrash);
+            //    env = new Environment(i, robot, qtdTrashDeposits, percentDirty);
+            //    Console.WriteLine("Tamanho do ambiente = {0}x{0}", i);
+            //    Console.WriteLine("Percentual de sujeira no ambiente = {0} %", percentDirty);
+            //    Console.WriteLine("Lixeiras no ambiente = {0}", qtdTrashDeposits);
+            //    Console.WriteLine("Lixeira interna agente = {0}", robot.usedInternalTrash());
+            //    Console.WriteLine("\n");
+            //    env.initializeMap();
+            //    env.positioningAgent(robot);
+            //    env.buildWalls();
+            //    env.buildTrashDeposits();
+            //    env.buildDirtyEnvironment();
 
-            //#region INSTANCIAÇÃO DO AGENTE
-            //robot = new Agent(internalTrash);
-            //#endregion
+            //    robot.environment = env;
+            //    aStar = new Astar(env);
+            //    robot.aStar = aStar;
 
-            //#region INSTANCIAÇÃO DO AMBIENTE
-            //env = new Environment(size, robot, qtdTrashDeposits, percentDirty);
-            //#endregion
+            //    env.showEnvironment();
+            //    Program.breakLines();
+            //}
 
-            //#region CHAMADA DE METODOS PARA INICIALIZAR MAPA E MOSTRAR AMBIENTE
-            //Console.WriteLine("Tamanho do ambiente = {0}x{0}", size);
-            //Console.WriteLine("Percentual de sujeira no ambiente = {0} %", percentDirty);
-            //Console.WriteLine("Lixeiras no ambiente = {0}", qtdTrashDeposits);
-            //Console.WriteLine("Lixeira interna agente = {0}", env.agent.usedInternalTrash());
-            //Console.WriteLine("\n");
+            #region DECLARAÇÃO DE VARIAVEIS
+            Environment env;
+            Agent robot;
+            Node destinyNode;
+            Astar aStar;
+            int size = 18;
+            int qtdTrashDeposits = 3;
+            int percentDirty = 15;
+            int internalTrash = 4;
+            #endregion
 
-            //env.initializeMap();
-            //env.positioningAgent(robot);
-            //env.buildWalls();
-            //env.buildTrashDeposits();
-            //env.buildDirtyEnvironment();
+            #region INSTANCIAÇÃO DO AGENTE
+            robot = new Agent(internalTrash);
+            #endregion
 
-            //robot.environment = env;
-            //aStar = new Astar(env);
-            //robot.aStar = aStar;
+            #region INSTANCIAÇÃO DO AMBIENTE
+            env = new Environment(size, robot, qtdTrashDeposits, percentDirty);
+            #endregion
 
-            //env.showEnvironment();
+            #region CHAMADA DE METODOS PARA INICIALIZAR MAPA E MOSTRAR AMBIENTE
+            Console.WriteLine("Tamanho do ambiente = {0}x{0}", size);
+            Console.WriteLine("Percentual de sujeira no ambiente = {0} %", percentDirty);
+            Console.WriteLine("Lixeiras no ambiente = {0}", qtdTrashDeposits);
+            Console.WriteLine("Lixeira interna agente = {0}", robot.usedInternalTrash());
+            Console.WriteLine("\n");
+
+            env.initializeMap();
+            env.positioningAgent(robot);
+            env.buildWalls();
+            env.buildTrashDeposits();
+            env.buildDirtyEnvironment();
+
+            robot.environment = env;
+            aStar = new Astar(env);
+            robot.aStar = aStar;
+
+            env.showEnvironment();
+            #endregion
 
 
+            #region EXECUTA A*
             //// A* que limpa ambiente
             ////env.agent.clean(env.map);
 
-            //// A* só move
-            ////destinyNode = env.agent.move(env.map);
-            ////List<Node> listFathers = env.createFatherList(destinyNode);
-            ////env.moveAgentAroundEnvironment(env.agent, listFathers, destinyNode);
-            ////Program.breakLines();
+            // A* só move
+            destinyNode = robot.move();
+            List<Node> listFathers = env.createFatherList(destinyNode);
+            env.moveAgentAroundEnvironment(robot, listFathers, destinyNode);
+            Program.breakLines();
+            #endregion
 
-             Console.ReadKey();
+            //Console.ReadKey();
         }
     }
 }
