@@ -101,7 +101,7 @@ namespace Trash_Collector_Agent.src
             Program.breakLines();
             #endregion
 
-            //Console.ReadKey();
+            Console.ReadKey();
         }
     }
 }

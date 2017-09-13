@@ -57,20 +57,24 @@ namespace Trash_Collector_Agent.src
 
         public void updatePosition(Position last, Position current, Position next)
         {
-            this.LastPosition.Line = last.Line;
-            this.LastPosition.Column = last.Column;
-            this.CurrentPosition.Line = current.Line;
-            this.CurrentPosition.Column = current.Column;
-            this.NextPosition.Line = next.Line;
-            this.NextPosition.Column = next.Column;
+            this.LastPosition = last;
+            this.CurrentPosition = current;
+            this.NextPosition = next;
         }
 
-        public void updatePosition(Position currentPosition, Position nextPosition)
+        public void updateLastPosition(Position currentPosition)
         {
-            this.LastPosition.Line = currentPosition.Line;
-            this.LastPosition.Column = currentPosition.Column;
-            this.CurrentPosition.Line = nextPosition.Line;
-            this.CurrentPosition.Column = nextPosition.Column;
+            this.LastPosition = currentPosition;
+        }
+
+        public void updateCurrentPosition(Position nextPosition)
+        {
+            this.CurrentPosition = nextPosition;
+        }
+
+        public void updateNextPosition(Position nextNextPosition)
+        {
+            this.NextPosition = nextNextPosition;
         }
 
         public Int32 usedInternalTrash()
@@ -150,7 +154,7 @@ namespace Trash_Collector_Agent.src
                             Node end = new Node(nearestTrash.Line, nearestTrash.Column);
                             Node destinyNode;
                             destinyNode = aStar.PathFindAStar(environment, begin, end);
-                            List<Node> listFathers = Environment.staticCreateFatherList(destinyNode);
+                            List<Node> listFathers = environment.createFatherList(destinyNode);
                             List<Node> cloneListFathers = listFathers.ToList<Node>();
                             Console.WriteLine("Going to destiny");
                             Console.WriteLine("Current internal trash capacity: {0}", this.currentInternalTrash);
@@ -201,7 +205,7 @@ namespace Trash_Collector_Agent.src
                             Node end = new Node(nearestTrash.Line, nearestTrash.Column);
                             Node destinyNode;
                             destinyNode = aStar.PathFindAStar(environment, begin, end);
-                            List<Node> listFathers = Environment.staticCreateFatherList(destinyNode);
+                            List<Node> listFathers = environment.createFatherList(destinyNode);
                             List<Node> cloneListFathers = listFathers.ToList<Node>();
                             Console.WriteLine("Going to destiny - RUNNUNG A*");
                             Console.WriteLine("Current internal trash capacity: {0}", this.currentInternalTrash);
@@ -249,7 +253,7 @@ namespace Trash_Collector_Agent.src
                             Node end = new Node(nearestTrash.Line, nearestTrash.Column);
                             Node destinyNode;
                             destinyNode = aStar.PathFindAStar(environment, begin, end);
-                            List<Node> listFathers = Environment.staticCreateFatherList(destinyNode);
+                            List<Node> listFathers = environment.createFatherList(destinyNode);
                             List<Node> cloneListFathers = listFathers.ToList<Node>();
                             Console.WriteLine("Going to destiny - RUNNUNG A*");
                             Console.WriteLine("Current internal trash capacity: {0}", this.currentInternalTrash);
@@ -297,7 +301,7 @@ namespace Trash_Collector_Agent.src
                             Node end = new Node(nearestTrash.Line, nearestTrash.Column);
                             Node destinyNode;
                             destinyNode = aStar.PathFindAStar(environment, begin, end);
-                            List<Node> listFathers = Environment.staticCreateFatherList(destinyNode);
+                            List<Node> listFathers = environment.createFatherList(destinyNode);
                             List<Node> cloneListFathers = listFathers.ToList<Node>();
                             Console.WriteLine("Going to destiny - RUNNUNG A*");
                             environment.moveAgentAroundEnvironment(this, listFathers, destinyNode);
