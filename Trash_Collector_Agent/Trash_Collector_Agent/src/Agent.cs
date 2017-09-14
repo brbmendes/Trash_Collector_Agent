@@ -113,7 +113,7 @@ namespace Trash_Collector_Agent.src
                     {
                         if (this.CurrentPosition.Line == environment.Size) break;
                         // ... verifica posicao abaixo
-                        if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column).ToString().Trim() == "D" && this.currentInternalTrash > 0)
+                        if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column) == "D" && this.currentInternalTrash > 0)
                         {
                             this.collectTrash();
                             this.LastPosition.Line = this.CurrentPosition.Line;
@@ -122,9 +122,13 @@ namespace Trash_Collector_Agent.src
                             right = false;
                             this.LastPosition.Column = this.CurrentPosition.Column;
                         }
-                        else if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column).ToString().Trim() == "D" && this.currentInternalTrash == 0)
+                        else if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column) == "D" && this.currentInternalTrash == 0)
                         {
-                            this.locateNearestTrashAndCleanTrash();  
+                            Boolean foundPathToNearestTrash = this.locateNearestTrashAndCleanTrash();
+                            if (!foundPathToNearestTrash)
+                            {
+                                System.Environment.Exit(1);
+                            }
                             this.collectTrash();
                             this.LastPosition.Line = this.CurrentPosition.Line;
                             this.CurrentPosition.Line += 1;
@@ -133,7 +137,7 @@ namespace Trash_Collector_Agent.src
                             this.LastPosition.Column = this.CurrentPosition.Column;
                         }
                         // se for sujeira
-                        else if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column).ToString().Trim() == "T")
+                        else if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column) == "T")
                         {
                             Position pos = new Position(this.CurrentPosition.Line, this.CurrentPosition.Column - 1);
                             this.updateLastPosition(this.CurrentPosition);
@@ -144,7 +148,7 @@ namespace Trash_Collector_Agent.src
                             environment.showEnvironment();
 
                             // se for sujeira e lixeira NÃO estiver cheia
-                            if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column).ToString().Trim() == "D" && this.currentInternalTrash > 0)
+                            if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column) == "D" && this.currentInternalTrash > 0)
                             {
                                 this.collectTrash();
                                 this.LastPosition.Line = this.CurrentPosition.Line;
@@ -154,10 +158,14 @@ namespace Trash_Collector_Agent.src
                                 this.LastPosition.Column = this.CurrentPosition.Column;
                             }
                             // se for sujeira e lixeira ESTIVER cheia
-                            else if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column).ToString().Trim() == "D" && this.currentInternalTrash == 0)
+                            else if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column) == "D" && this.currentInternalTrash == 0)
                             {
 
-                                this.locateNearestTrashAndCleanTrash();
+                                Boolean foundPathToNearestTrash = this.locateNearestTrashAndCleanTrash();
+                                if (!foundPathToNearestTrash)
+                                {
+                                    System.Environment.Exit(1);
+                                }
                                 this.collectTrash();
                                 this.LastPosition.Line = this.CurrentPosition.Line;
                                 this.CurrentPosition.Line += 1;
@@ -182,11 +190,11 @@ namespace Trash_Collector_Agent.src
                             this.LastPosition.Column = this.CurrentPosition.Column;
                         }
                     }
-                    else
+                    else // NÃO É A ÚLTIMA COLUNA, E ESTÁ ANDANDO PARA A DIREITA.
                     {
                         // ... verifica o lado direito
                         if (this.CurrentPosition.Column == environment.Size) break;
-                        if (environment.Map.GetValue(CurrentPosition.Line, CurrentPosition.Column + 1).ToString().Trim() == "D" && this.currentInternalTrash > 0)
+                        if (environment.Map.GetValue(CurrentPosition.Line, CurrentPosition.Column + 1) == "D" && this.currentInternalTrash > 0)
                         {
                             
                             this.collectTrash();
@@ -194,13 +202,67 @@ namespace Trash_Collector_Agent.src
                             Position pos = new Position(this.CurrentPosition.Line, this.CurrentPosition.Column + 1);
                             this.updateCurrentPosition(pos);
                         }
-                        else if (environment.Map.GetValue(CurrentPosition.Line, CurrentPosition.Column + 1).ToString().Trim() == "D" && this.currentInternalTrash == 0) // se for sujeira e estiver cheio
+                        else if (environment.Map.GetValue(CurrentPosition.Line, CurrentPosition.Column + 1) == "D" && this.currentInternalTrash == 0) // se for sujeira e estiver cheio
                         {
-                            this.locateNearestTrashAndCleanTrash();  
+                            Boolean foundPathToNearestTrash = this.locateNearestTrashAndCleanTrash();
+                            if (!foundPathToNearestTrash)
+                            {
+                                System.Environment.Exit(1);
+                            } 
                             this.collectTrash();
                             this.updateLastPosition(this.CurrentPosition);
                             Position pos = new Position(this.CurrentPosition.Line, this.CurrentPosition.Column + 1);
                             this.updateCurrentPosition(pos);
+                        }
+                        else if (environment.Map.GetValue(CurrentPosition.Line, CurrentPosition.Column + 1) == "#") // se achou parede
+                        {
+                            Position targetPosition = new Position(this.CurrentPosition.Line, this.CurrentPosition.Column+1);
+                            while (environment.Map.GetValue(targetPosition.Line, targetPosition.Column) == "#" || environment.Map.GetValue(targetPosition.Line, targetPosition.Column) == "T")
+                            { // enquanto achar parede ou lixeira, incrementa posicao
+                                targetPosition.Column++;
+                            }
+                            if (environment.Map.GetValue(targetPosition.Line, targetPosition.Column) == "D") // achou lixo
+                            {
+                                Position futurePositionRobot = new Position(targetPosition.Line - 1, targetPosition.Column);
+                                Boolean foundPathToNearestBlankSpaceAfterWall = this.locatePathToBlankSpotAfterWall(futurePositionRobot);
+                                if (!foundPathToNearestBlankSpaceAfterWall)
+                                {
+                                    System.Environment.Exit(1);
+                                }
+                                
+                                Console.WriteLine("\n");
+                                Console.WriteLine("Current internal trash capacity: {0}", this.currentInternalTrash);
+                                environment.showEnvironment();
+
+                                if (this.currentInternalTrash > 0) // se não estiver cheio
+                                {
+                                    this.collectTrash();
+                                    this.updateLastPosition(this.CurrentPosition);
+                                    Position pos = new Position(this.CurrentPosition.Line+1, this.CurrentPosition.Column);
+                                    this.updateCurrentPosition(pos);
+                                }
+                                else  // se estiver cheio
+                                {
+                                    Boolean foundPathToNearestTrash = this.locateNearestTrashAndCleanTrash();
+                                    if (!foundPathToNearestTrash)
+                                    {
+                                        System.Environment.Exit(1);
+                                    }
+                                    this.collectTrash();
+                                    this.updateLastPosition(this.CurrentPosition);
+                                    Position pos = new Position(this.CurrentPosition.Line+1, this.CurrentPosition.Column);
+                                    this.updateCurrentPosition(pos);
+                                }
+                            }
+                            else
+                            {
+                                Position futurePositionRobot = new Position(targetPosition.Line, targetPosition.Column);
+                                Boolean foundPathToNearestBlankSpaceAfterWall = this.locatePathToBlankSpotAfterWall(futurePositionRobot);
+                                if (!foundPathToNearestBlankSpaceAfterWall)
+                                {
+                                    System.Environment.Exit(1);
+                                }
+                            }
                         }
                         else // não é sujeira
                         {
@@ -219,7 +281,7 @@ namespace Trash_Collector_Agent.src
                         // ... verifica posicao abaixo
                         
                         // se for sujeira e lixeira NÃO estiver cheia
-                        if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column).ToString().Trim() == "D" && this.currentInternalTrash > 0)
+                        if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column) == "D" && this.currentInternalTrash > 0)
                         {
                             this.collectTrash();
                             this.LastPosition.Line = this.CurrentPosition.Line;
@@ -229,10 +291,14 @@ namespace Trash_Collector_Agent.src
                             this.LastPosition.Column = this.CurrentPosition.Column;
                         }
                         // se for sujeira e lixeira ESTIVER cheia
-                        else if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column).ToString().Trim() == "D" && this.currentInternalTrash == 0)
+                        else if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column) == "D" && this.currentInternalTrash == 0)
                         {
 
-                            this.locateNearestTrashAndCleanTrash();               
+                            Boolean foundPathToNearestTrash = this.locateNearestTrashAndCleanTrash();
+                            if (!foundPathToNearestTrash)
+                            {
+                                System.Environment.Exit(1);
+                            }               
                             this.collectTrash();
                             this.LastPosition.Line = this.CurrentPosition.Line;
                             this.CurrentPosition.Line += 1;
@@ -241,7 +307,7 @@ namespace Trash_Collector_Agent.src
                             this.LastPosition.Column = this.CurrentPosition.Column;
                         }
                         // se for lixeira
-                        else if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column).ToString().Trim() == "T")
+                        else if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column) == "T")
                         {
                             Position pos = new Position(this.CurrentPosition.Line, this.CurrentPosition.Column + 1);
                             this.updateLastPosition(this.CurrentPosition);
@@ -251,7 +317,7 @@ namespace Trash_Collector_Agent.src
                             environment.printAgent(this);
                             environment.showEnvironment();
                             
-                            if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column).ToString().Trim() == "D" && this.currentInternalTrash > 0)
+                            if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column) == "D" && this.currentInternalTrash > 0)
                             {
                                 this.collectTrash();
                                 this.LastPosition.Line = this.CurrentPosition.Line;
@@ -261,10 +327,14 @@ namespace Trash_Collector_Agent.src
                                 this.LastPosition.Column = this.CurrentPosition.Column;
                             }
                             // se for sujeira e lixeira ESTIVER cheia
-                            else if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column).ToString().Trim() == "D" && this.currentInternalTrash == 0)
+                            else if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column) == "D" && this.currentInternalTrash == 0)
                             {
 
-                                this.locateNearestTrashAndCleanTrash();
+                                Boolean foundPathToNearestTrash = this.locateNearestTrashAndCleanTrash();
+                                if (!foundPathToNearestTrash)
+                                {
+                                    System.Environment.Exit(1);
+                                }
                                 this.collectTrash();
                                 this.LastPosition.Line = this.CurrentPosition.Line;
                                 this.CurrentPosition.Line += 1;
@@ -293,20 +363,40 @@ namespace Trash_Collector_Agent.src
                     } else {
                         // ... verifica o lado esquerdo
                         if (this.CurrentPosition.Column == environment.Size) break;
-                        if (environment.Map.GetValue(CurrentPosition.Line, CurrentPosition.Column - 1).ToString().Trim() == "D" && this.currentInternalTrash > 0)
+                        if (environment.Map.GetValue(CurrentPosition.Line, CurrentPosition.Column - 1) == "D" && this.currentInternalTrash > 0)
                         {
                             this.collectTrash();
                             this.LastPosition.Line = this.CurrentPosition.Line;
                             this.LastPosition.Column = this.CurrentPosition.Column;
                             this.CurrentPosition.Column -= 1;
                         }
-                        else if (environment.Map.GetValue(CurrentPosition.Line, CurrentPosition.Column - 1).ToString().Trim() == "D" && this.currentInternalTrash == 0)
+                        else if (environment.Map.GetValue(CurrentPosition.Line, CurrentPosition.Column - 1) == "D" && this.currentInternalTrash == 0)
                         {
-                            this.locateNearestTrashAndCleanTrash();
+                            Boolean foundPathToNearestTrash = this.locateNearestTrashAndCleanTrash();
+                            if (!foundPathToNearestTrash)
+                            {
+                                System.Environment.Exit(1);
+                            }
                             this.collectTrash();
                             this.LastPosition.Line = this.CurrentPosition.Line;
                             this.LastPosition.Column = this.CurrentPosition.Column;
                             this.CurrentPosition.Column -= 1;
+                        }
+                        else if (environment.Map.GetValue(CurrentPosition.Line, CurrentPosition.Column - 1) == "#") // se achou parede
+                        {
+                            Position targetPosition = new Position(this.CurrentPosition.Line, this.CurrentPosition.Column);
+                            while (environment.Map.GetValue(targetPosition.Line, targetPosition.Column - 1) == "#" || environment.Map.GetValue(targetPosition.Line, targetPosition.Column - 1) == "T")
+                            { // enquanto achar parede ou lixeira, decrementa posicao
+                                targetPosition.Column--;
+                            }
+                            if (environment.Map.GetValue(targetPosition.Line, targetPosition.Column) == "D") // achou lixo
+                            {
+                            //TODO: fazer A* nesse ponto, da mesma forma que o lado direito, e consertar bug registrado no GITHUB
+                                // se achou lixo, verifica posição acima
+                                // verifica se pode limpar ( se tem espaco na lixeira )
+                                // se puder, limpa e anda para baixo, voltando para a mesma linha que estava.
+                                // senão, faz a* até a lixeira mais próxima, esvazia lixeira, volta para onde estava, limpa e anda para baixo, voltando para a mesma linha que estava.
+                            }
                         }
                         else
                         {
@@ -400,22 +490,50 @@ namespace Trash_Collector_Agent.src
             return absoluteX + absoluteY;
         }
 
-        private void locateNearestTrashAndCleanTrash()
+        private Boolean locateNearestTrashAndCleanTrash()
         {
             Node begin = new Node(this.CurrentPosition.Line, this.CurrentPosition.Column);
             Position nearestTrash = this.calculateNearestTrash(this.CurrentPosition);
             Node end = new Node(nearestTrash.Line, nearestTrash.Column);
-            Node target;
-            target = aStar.PathFindAStar(environment, begin, end);
-            List<Node> listFathers = environment.createFatherList(target);
+            Node targetNode;
+            targetNode = aStar.PathFindAStar(environment, begin, end);
+            if(targetNode == null)
+            {
+                Console.WriteLine("Way to nearest trash is impossible or is blocked.");
+                Console.WriteLine("Robot position: [{0},{1}]", this.CurrentPosition.Line, this.CurrentPosition.Column);
+                Console.WriteLine("Target position: [{0},{1}]", end.XY.Line, end.XY.Column);
+                return false;
+            }
+            List<Node> listFathers = environment.createFatherList(targetNode);
             List<Node> cloneListFathers = listFathers.ToList<Node>();
             Console.WriteLine("Going to trashDeposit located in [{0}][{1}]", end.XY.Line, end.XY.Column);
             Console.WriteLine("Current internal trash capacity: {0}", this.currentInternalTrash);
-            environment.moveAgentAroundEnvironment(this, listFathers, target);
+            environment.moveAgentAroundEnvironment(this, listFathers, targetNode);
             this.cleanInternalTrash();
             cloneListFathers.Reverse();
             Console.WriteLine("Returning from trashDeposit located in [{0}][{1}]", end.XY.Line, end.XY.Column);
-            environment.moveAgentAroundEnvironment(this, cloneListFathers, target);
+            environment.moveAgentAroundEnvironment(this, cloneListFathers, targetNode);
+            return true;
+        }
+
+        private Boolean locatePathToBlankSpotAfterWall(Position targetPosition)
+        {
+            Node begin = new Node(this.CurrentPosition.Line, this.CurrentPosition.Column);
+            Node end = new Node(targetPosition.Line, targetPosition.Column);
+            Node targetNode;
+            targetNode = aStar.PathFindAStar(environment, begin, end);
+            if (targetNode == null)
+            {
+                Console.WriteLine("Way to nearest blank space after wall is impossible or is blocked.");
+                Console.WriteLine("Robot position: [{0},{1}]", this.CurrentPosition.Line, this.CurrentPosition.Column);
+                Console.WriteLine("Target position: [{0},{1}]", end.XY.Line, end.XY.Column);
+                return false;
+            }
+            List<Node> listFathers = environment.createFatherList(targetNode);
+            Console.WriteLine("Going to blank space located in [{0}][{1}]", end.XY.Line, end.XY.Column);
+            Console.WriteLine("Current internal trash capacity: {0}", this.currentInternalTrash);
+            environment.moveAgentAroundEnvironment(this, listFathers, targetNode);
+            return true;
         }
     }
 }
