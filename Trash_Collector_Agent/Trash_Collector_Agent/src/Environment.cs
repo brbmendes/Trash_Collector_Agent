@@ -259,7 +259,7 @@ namespace Trash_Collector_Agent.src
                 Trash_deposit deposit = new Trash_deposit(p);
                 if (deposit.XY.Column != 1)
                 {
-                    if ( this.Map.GetValue(deposit.XY.Line, deposit.XY.Column) == "-")
+                    if (this.Map.GetValue(deposit.XY.Line, deposit.XY.Column).ToString() == "-")
                     {
                         this.Map.SetValue("T", deposit.XY.Line, deposit.XY.Column);
                         this.trashDeposits.Add(deposit);
@@ -276,7 +276,7 @@ namespace Trash_Collector_Agent.src
                 Trash_deposit deposit = new Trash_deposit(p);
                 if (deposit.XY.Column != this.Size - 2)
                 {
-                    if (this.Map.GetValue(deposit.XY.Line, deposit.XY.Column) == "-")
+                    if (this.Map.GetValue(deposit.XY.Line, deposit.XY.Column).ToString() == "-")
                     {
                         this.Map.SetValue("T", deposit.XY.Line, deposit.XY.Column);
                         this.trashDeposits.Add(deposit);
@@ -301,7 +301,7 @@ namespace Trash_Collector_Agent.src
             {
                 Position p = new Position(rnd.Next(0, this.Size), rnd.Next(0, this.Size));
                 Dirty dirty = new Dirty(p);
-                if (this.Map.GetValue(dirty.XY.Line, dirty.XY.Column) == "-")
+                if (this.Map.GetValue(dirty.XY.Line, dirty.XY.Column).ToString() == "-")
                 {
                     this.Map.SetValue("D", dirty.XY.Line, dirty.XY.Column);
                     this.dirties.Add(dirty);
@@ -358,7 +358,7 @@ namespace Trash_Collector_Agent.src
                     if (nextPosition.XY.Line == target.XY.Line && nextPosition.XY.Column == target.XY.Column)
                     {
                         this.printInfo(hasNextNextPosition, target);
-                        if (this.Map.GetValue(target.XY.Line, target.XY.Column) == "-")
+                        if (this.Map.GetValue(target.XY.Line, target.XY.Column).ToString() == "-")
                         {
                             robot.updateCurrentPosition(target.XY);
                             printAgent(robot);
@@ -394,7 +394,7 @@ namespace Trash_Collector_Agent.src
                     if (nextPosition.XY.Line == target.XY.Line && nextPosition.XY.Column == target.XY.Column)
                     {
                         this.printInfo(hasNextNextPosition, target);
-                        if (this.Map.GetValue(target.XY.Line, target.XY.Column) == "-")
+                        if (this.Map.GetValue(target.XY.Line, target.XY.Column).ToString() == "-")
                         {
                             robot.updateCurrentPosition(target.XY);
                             printAgent(robot);
