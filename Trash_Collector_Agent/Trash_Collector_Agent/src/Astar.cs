@@ -8,15 +8,17 @@ namespace Trash_Collector_Agent.src
 {
     class Astar
     {
+        private Agent robot;
         private Environment env { get; set; }
         //private String[,] map;
         private List<Node> openList;
         private List<Node> closedList;
         private Dictionary<String, Node> initializedNodes;
 
-        public Astar(Environment environment)
+        public Astar(Environment environment, Agent robot)
         {
             this.env = environment;
+            this.robot = robot;
         }
 
         // True se encontrou o caminho
@@ -40,7 +42,6 @@ namespace Trash_Collector_Agent.src
                 // se a lista aberta estiver vazia, não pudemos encontrar um caminho
                 if (openList.Count == 0)
                 {
-                    Console.WriteLine("Caminho não encontrado.");
                     return null;
                 }
 
@@ -162,7 +163,6 @@ namespace Trash_Collector_Agent.src
                 // se a lista aberta estiver vazia, não pudemos encontrar um caminho
                 if (openList.Count == 0)
                 {
-                    Console.WriteLine("Caminho não encontrado.");
                     return null;
                 }
 
@@ -266,6 +266,78 @@ namespace Trash_Collector_Agent.src
 
                 }
             }
+        }
+
+        public Position calculateNearestTrash(Position agentPosition)
+        {
+            Position nearestTrash = new Position(0, 0);
+            Int32 absolutePosition = Int32.MaxValue;
+
+            foreach (Trash_deposit trash in robot.trashDeposits)
+            {
+                Position tempTrash = new Position(trash.XY.Line, trash.XY.Column);
+                Int32 localAbsolutePosition = calculateAbsolutePosition(agentPosition, tempTrash);
+                if (localAbsolutePosition < absolutePosition)
+                {
+                    nearestTrash = tempTrash;
+                    absolutePosition = localAbsolutePosition;
+                }
+            }
+            return nearestTrash;
+        }
+
+        public int calculateAbsolutePosition(Position elem1, Position elem2)
+        {
+            int absoluteX = Math.Abs(elem1.Line - elem2.Line);
+            int absoluteY = Math.Abs(elem1.Column - elem2.Column);
+
+            return absoluteX + absoluteY;
+        }
+
+        public Boolean locateNearestTrashAndCleanTrash()
+        {
+            Node begin = new Node(robot.CurrentPosition.Line, robot.CurrentPosition.Column);
+            Position nearestTrash = this.calculateNearestTrash(robot.CurrentPosition);
+            Node end = new Node(nearestTrash.Line, nearestTrash.Column);
+            Node targetNode;
+            targetNode = PathFindAStar(env, begin, end);
+            if (targetNode == null)
+            {
+                Console.WriteLine("Way to nearest trash is impossible or is blocked.");
+                Console.WriteLine("Robot position: [{0},{1}]", robot.CurrentPosition.Line, robot.CurrentPosition.Column);
+                Console.WriteLine("Target position: [{0},{1}]", end.XY.Line, end.XY.Column);
+                return false;
+            }
+            List<Node> listFathers = env.createFatherList(targetNode);
+            List<Node> cloneListFathers = listFathers.ToList<Node>();
+            Console.WriteLine("Going to trashDeposit located in [{0}][{1}]", end.XY.Line, end.XY.Column);
+            Console.WriteLine("Current internal trash capacity: {0}", robot.currentInternalTrash);
+            env.moveAgentAroundEnvironment(robot, listFathers, targetNode);
+            robot.cleanInternalTrash();
+            cloneListFathers.Reverse();
+            Console.WriteLine("Returning from trashDeposit located in [{0}][{1}]", end.XY.Line, end.XY.Column);
+            env.moveAgentAroundEnvironment(robot, cloneListFathers, targetNode);
+            return true;
+        }
+
+        public Boolean locatePathToBlankSpotAfterWall(Position targetPosition)
+        {
+            Node begin = new Node(robot.CurrentPosition.Line, robot.CurrentPosition.Column);
+            Node end = new Node(targetPosition.Line, targetPosition.Column);
+            Node targetNode;
+            targetNode = PathFindAStar(env, begin, end);
+            if (targetNode == null)
+            {
+                Console.WriteLine("Way to nearest blank space after wall is impossible or is blocked.");
+                Console.WriteLine("Robot position: [{0},{1}]", robot.CurrentPosition.Line, robot.CurrentPosition.Column);
+                Console.WriteLine("Target position: [{0},{1}]", end.XY.Line, end.XY.Column);
+                return false;
+            }
+            List<Node> listFathers = env.createFatherList(targetNode);
+            Console.WriteLine("Going to blank space located in [{0}][{1}]", end.XY.Line, end.XY.Column);
+            Console.WriteLine("Current internal trash capacity: {0}", robot.currentInternalTrash);
+            env.moveAgentAroundEnvironment(robot, listFathers, targetNode);
+            return true;
         }
 
         private static void copyValues(Node source, Node destiny)

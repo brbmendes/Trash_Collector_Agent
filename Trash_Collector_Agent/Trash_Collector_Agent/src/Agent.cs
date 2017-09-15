@@ -11,12 +11,12 @@ namespace Trash_Collector_Agent.src
         /// <summary>
         /// Capacity agent internal trash
         /// </summary>
-        Int32 capacityInternalTrash;
+        public Int32 capacityInternalTrash { get; set; }
 
         /// <summary>
         /// Current agent internal trash
         /// </summary>
-        Int32 currentInternalTrash;
+        public Int32 currentInternalTrash { get; set; }
 
         /// <summary>
         /// Last Position agent
@@ -36,7 +36,7 @@ namespace Trash_Collector_Agent.src
         /// <summary>
         /// List of trash deposit points
         /// </summary>
-        List<Trash_deposit> trashDeposits;
+        public List<Trash_deposit> trashDeposits { get; set; }
 
         /// <summary>
         /// Position agent
@@ -128,7 +128,7 @@ namespace Trash_Collector_Agent.src
 
                 if(environment.Size % 2 == 0)
                 {
-                    if(this.CurrentPosition.Line == 0 && this.CurrentPosition.Column == 0)
+                    if (this.CurrentPosition.Line == environment.Size - 1 && this.CurrentPosition.Column == 0)
                     {
                         // Chegou na posicao final
                         Console.WriteLine("Fim do programa.");
@@ -162,9 +162,10 @@ namespace Trash_Collector_Agent.src
                         }
                         else if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column) == "D" && this.currentInternalTrash == 0)
                         {
-                            Boolean foundPathToNearestTrash = this.locateNearestTrashAndCleanTrash();
+                            Boolean foundPathToNearestTrash = aStar.locateNearestTrashAndCleanTrash();
                             if (!foundPathToNearestTrash)
                             {
+                                Console.ReadKey();
                                 System.Environment.Exit(1);
                             }
                             this.collectTrash();
@@ -199,9 +200,10 @@ namespace Trash_Collector_Agent.src
                             else if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column) == "D" && this.currentInternalTrash == 0)
                             {
 
-                                Boolean foundPathToNearestTrash = this.locateNearestTrashAndCleanTrash();
+                                Boolean foundPathToNearestTrash = aStar.locateNearestTrashAndCleanTrash();
                                 if (!foundPathToNearestTrash)
                                 {
+                                    Console.ReadKey();
                                     System.Environment.Exit(1);
                                 }
                                 this.collectTrash();
@@ -243,9 +245,10 @@ namespace Trash_Collector_Agent.src
                         }
                         else if (environment.Map.GetValue(CurrentPosition.Line, CurrentPosition.Column + 1) == "D" && this.currentInternalTrash == 0) // se for sujeira e estiver cheio
                         {
-                            Boolean foundPathToNearestTrash = this.locateNearestTrashAndCleanTrash();
+                            Boolean foundPathToNearestTrash = aStar.locateNearestTrashAndCleanTrash();
                             if (!foundPathToNearestTrash)
                             {
+                                Console.ReadKey();
                                 System.Environment.Exit(1);
                             }
                             this.collectTrash();
@@ -271,9 +274,10 @@ namespace Trash_Collector_Agent.src
                                 else if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column + 1) == "D" && this.currentInternalTrash == 0)
                                 {
 
-                                    Boolean foundPathToNearestTrash = this.locateNearestTrashAndCleanTrash();
+                                    Boolean foundPathToNearestTrash = aStar.locateNearestTrashAndCleanTrash();
                                     if (!foundPathToNearestTrash)
                                     {
+                                        Console.ReadKey();
                                         System.Environment.Exit(1);
                                     }
                                     Position pos = new Position(CurrentPosition.Line + 1, CurrentPosition.Column + 1);
@@ -297,9 +301,10 @@ namespace Trash_Collector_Agent.src
                                     else if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column) == "D" && this.currentInternalTrash == 0)
                                     {
 
-                                        Boolean foundPathToNearestTrash = this.locateNearestTrashAndCleanTrash();
+                                        Boolean foundPathToNearestTrash = aStar.locateNearestTrashAndCleanTrash();
                                         if (!foundPathToNearestTrash)
                                         {
+                                            Console.ReadKey();
                                             System.Environment.Exit(1);
                                         }
                                         Position pos = new Position(CurrentPosition.Line + 1, CurrentPosition.Column);
@@ -343,9 +348,10 @@ namespace Trash_Collector_Agent.src
                                         movedRightDiagonal = true;
                                     }
                                     Position futurePositionRobot = new Position(targetPosition.Line - 1, targetPosition.Column);
-                                    Boolean foundPathToNearestBlankSpaceAfterWall = this.locatePathToBlankSpotAfterWall(futurePositionRobot);
+                                    Boolean foundPathToNearestBlankSpaceAfterWall = aStar.locatePathToBlankSpotAfterWall(futurePositionRobot);
                                     if (!foundPathToNearestBlankSpaceAfterWall)
                                     {
+                                        Console.ReadKey();
                                         System.Environment.Exit(1);
                                     }
 
@@ -372,9 +378,10 @@ namespace Trash_Collector_Agent.src
                                     }
                                     else  // se estiver cheio
                                     {
-                                        Boolean foundPathToNearestTrash = this.locateNearestTrashAndCleanTrash();
+                                        Boolean foundPathToNearestTrash = aStar.locateNearestTrashAndCleanTrash();
                                         if (!foundPathToNearestTrash)
                                         {
+                                            Console.ReadKey();
                                             System.Environment.Exit(1);
                                         }
                                         if (movedRightDiagonal)
@@ -396,9 +403,10 @@ namespace Trash_Collector_Agent.src
                                 else
                                 {
                                     Position futurePositionRobot = new Position(targetPosition.Line, targetPosition.Column);
-                                    Boolean foundPathToNearestBlankSpaceAfterWall = this.locatePathToBlankSpotAfterWall(futurePositionRobot);
+                                    Boolean foundPathToNearestBlankSpaceAfterWall = aStar.locatePathToBlankSpotAfterWall(futurePositionRobot);
                                     if (!foundPathToNearestBlankSpaceAfterWall)
                                     {
+                                        Console.ReadKey();
                                         System.Environment.Exit(1);
                                     }
                                 }
@@ -435,9 +443,10 @@ namespace Trash_Collector_Agent.src
                         else if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column) == "D" && this.currentInternalTrash == 0)
                         {
 
-                            Boolean foundPathToNearestTrash = this.locateNearestTrashAndCleanTrash();
+                            Boolean foundPathToNearestTrash = aStar.locateNearestTrashAndCleanTrash();
                             if (!foundPathToNearestTrash)
                             {
+                                Console.ReadKey();
                                 System.Environment.Exit(1);
                             }
                             this.collectTrash();
@@ -471,9 +480,10 @@ namespace Trash_Collector_Agent.src
                             else if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column) == "D" && this.currentInternalTrash == 0)
                             {
 
-                                Boolean foundPathToNearestTrash = this.locateNearestTrashAndCleanTrash();
+                                Boolean foundPathToNearestTrash = aStar.locateNearestTrashAndCleanTrash();
                                 if (!foundPathToNearestTrash)
                                 {
+                                    Console.ReadKey();
                                     System.Environment.Exit(1);
                                 }
                                 this.collectTrash();
@@ -515,9 +525,10 @@ namespace Trash_Collector_Agent.src
                         }
                         else if (environment.Map.GetValue(CurrentPosition.Line, CurrentPosition.Column - 1) == "D" && this.currentInternalTrash == 0)
                         {
-                            Boolean foundPathToNearestTrash = this.locateNearestTrashAndCleanTrash();
+                            Boolean foundPathToNearestTrash = aStar.locateNearestTrashAndCleanTrash();
                             if (!foundPathToNearestTrash)
                             {
+                                Console.ReadKey();
                                 System.Environment.Exit(1);
                             }
                             this.collectTrash();
@@ -543,9 +554,10 @@ namespace Trash_Collector_Agent.src
                                 else if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column - 1) == "D" && this.currentInternalTrash == 0)
                                 {
 
-                                    Boolean foundPathToNearestTrash = this.locateNearestTrashAndCleanTrash();
+                                    Boolean foundPathToNearestTrash = aStar.locateNearestTrashAndCleanTrash();
                                     if (!foundPathToNearestTrash)
                                     {
+                                        Console.ReadKey();
                                         System.Environment.Exit(1);
                                     }
                                     Position pos = new Position(CurrentPosition.Line + 1, CurrentPosition.Column - 1);
@@ -569,9 +581,10 @@ namespace Trash_Collector_Agent.src
                                     else if (environment.Map.GetValue(CurrentPosition.Line + 1, CurrentPosition.Column) == "D" && this.currentInternalTrash == 0)
                                     {
 
-                                        Boolean foundPathToNearestTrash = this.locateNearestTrashAndCleanTrash();
+                                        Boolean foundPathToNearestTrash = aStar.locateNearestTrashAndCleanTrash();
                                         if (!foundPathToNearestTrash)
                                         {
+                                            Console.ReadKey();
                                             System.Environment.Exit(1);
                                         }
                                         Position pos = new Position(CurrentPosition.Line + 1, CurrentPosition.Column);
@@ -615,9 +628,10 @@ namespace Trash_Collector_Agent.src
                                         movedLeftDiagonal = true;
                                     }
                                     Position futurePositionRobot = new Position(targetPosition.Line - 1, targetPosition.Column - 1);
-                                    Boolean foundPathToNearestBlankSpaceAfterWall = this.locatePathToBlankSpotAfterWall(futurePositionRobot);
+                                    Boolean foundPathToNearestBlankSpaceAfterWall = aStar.locatePathToBlankSpotAfterWall(futurePositionRobot);
                                     if (!foundPathToNearestBlankSpaceAfterWall)
                                     {
+                                        Console.ReadKey();
                                         System.Environment.Exit(1);
                                     }
 
@@ -644,9 +658,10 @@ namespace Trash_Collector_Agent.src
                                     }
                                     else  // se estiver cheio
                                     {
-                                        Boolean foundPathToNearestTrash = this.locateNearestTrashAndCleanTrash();
+                                        Boolean foundPathToNearestTrash = aStar.locateNearestTrashAndCleanTrash();
                                         if (!foundPathToNearestTrash)
                                         {
+                                            Console.ReadKey();
                                             System.Environment.Exit(1);
                                         }
                                         if (movedLeftDiagonal)
@@ -668,9 +683,10 @@ namespace Trash_Collector_Agent.src
                                 else
                                 {
                                     Position futurePositionRobot = new Position(targetPosition.Line, targetPosition.Column-1);
-                                    Boolean foundPathToNearestBlankSpaceAfterWall = this.locatePathToBlankSpotAfterWall(futurePositionRobot);
+                                    Boolean foundPathToNearestBlankSpaceAfterWall = aStar.locatePathToBlankSpotAfterWall(futurePositionRobot);
                                     if (!foundPathToNearestBlankSpaceAfterWall)
                                     {
+                                        Console.ReadKey();
                                         System.Environment.Exit(1);
                                     }
                                 }
@@ -692,122 +708,122 @@ namespace Trash_Collector_Agent.src
 
 
 
-        public Node move()
-        {
-            #region A* IMPLEMENTADO
+        //public Node move()
+        //{
+        //    #region A* IMPLEMENTADO
 
-            // Pontos da atual posição do agente, e cria posição.
-            Position agentPosition = new Position(this.XY.Line, this.XY.Column);
+        //    // Pontos da atual posição do agente, e cria posição.
+        //    Position agentPosition = new Position(this.XY.Line, this.XY.Column);
 
-            // Cria nodo Begin;
-            Node begin = new Node(this.XY.Line, this.XY.Column);
-
-
-            #region ALTERNAR ENTRE AS LINHAS COMENTADAS PARA VER CADA UM DOS DESTINOS.
-
-            // Seta três posições diferentes como alvo do A*
-            //Position nearestTrash = this.calculateNearestTrash(agentPosition);
-            Position endOfMatrix = new Position(environment.Size - 1, environment.Size - 1);
-
-            // Define três posições diferentes como nodo destino.
-            //Node endNearestTrash = new Node(nearestTrash.Line, nearestTrash.Column);
-            Node endMatrix = new Node(endOfMatrix.Line, endOfMatrix.Column);
-
-            //Node nodoDestino = Astar.PathFindAStar(map, begin, endNearestTrash);
-            Node nodoDestino = aStar.PathFindAStar(environment, begin, endMatrix);
-            #endregion
-
-            return nodoDestino;
-            #endregion
-        }
-
-        public Node newAStar(String[,] map, Node end)
-        {
+        //    // Cria nodo Begin;
+        //    Node begin = new Node(this.XY.Line, this.XY.Column);
 
 
-            // Pontos da atual posição do agente, e cria posição.
-            Position agentPosition = new Position(this.XY.Line, this.XY.Column);
+        //    #region ALTERNAR ENTRE AS LINHAS COMENTADAS PARA VER CADA UM DOS DESTINOS.
 
-            // Cria nodo Begin;
-            Node begin = new Node(this.XY.Line, this.XY.Column);
+        //    // Seta três posições diferentes como alvo do A*
+        //    //Position nearestTrash = this.calculateNearestTrash(agentPosition);
+        //    Position endOfMatrix = new Position(environment.Size - 1, environment.Size - 1);
 
-            Node nodoDestino = aStar.PathFindAStar(environment, begin, end);
+        //    // Define três posições diferentes como nodo destino.
+        //    //Node endNearestTrash = new Node(nearestTrash.Line, nearestTrash.Column);
+        //    Node endMatrix = new Node(endOfMatrix.Line, endOfMatrix.Column);
+
+        //    //Node nodoDestino = Astar.PathFindAStar(map, begin, endNearestTrash);
+        //    Node nodoDestino = aStar.PathFindAStar(environment, begin, endMatrix);
+        //    #endregion
+
+        //    return nodoDestino;
+        //    #endregion
+        //}
+
+        //public Node newAStar(String[,] map, Node end)
+        //{
 
 
-            return nodoDestino;
+        //    // Pontos da atual posição do agente, e cria posição.
+        //    Position agentPosition = new Position(this.XY.Line, this.XY.Column);
 
-        }
+        //    // Cria nodo Begin;
+        //    Node begin = new Node(this.XY.Line, this.XY.Column);
 
-        private Position calculateNearestTrash(Position agentPosition)
-        {
-            Position nearestTrash = new Position(0, 0);
-            Int32 absolutePosition = Int32.MaxValue;
+        //    Node nodoDestino = aStar.PathFindAStar(environment, begin, end);
 
-            foreach (Trash_deposit trash in this.trashDeposits)
-            {
-                Position tempTrash = new Position(trash.XY.Line, trash.XY.Column);
-                Int32 localAbsolutePosition = calculateAbsolutePosition(agentPosition, tempTrash);
-                if (localAbsolutePosition < absolutePosition)
-                {
-                    nearestTrash = tempTrash;
-                    absolutePosition = localAbsolutePosition;
-                }
-            }
-            return nearestTrash;
-        }
 
-        private int calculateAbsolutePosition(Position elem1, Position elem2)
-        {
-            int absoluteX = Math.Abs(elem1.Line - elem2.Line);
-            int absoluteY = Math.Abs(elem1.Column - elem2.Column);
+        //    return nodoDestino;
 
-            return absoluteX + absoluteY;
-        }
+        //}
 
-        private Boolean locateNearestTrashAndCleanTrash()
-        {
-            Node begin = new Node(this.CurrentPosition.Line, this.CurrentPosition.Column);
-            Position nearestTrash = this.calculateNearestTrash(this.CurrentPosition);
-            Node end = new Node(nearestTrash.Line, nearestTrash.Column);
-            Node targetNode;
-            targetNode = aStar.PathFindAStar(environment, begin, end);
-            if (targetNode == null)
-            {
-                Console.WriteLine("Way to nearest trash is impossible or is blocked.");
-                Console.WriteLine("Robot position: [{0},{1}]", this.CurrentPosition.Line, this.CurrentPosition.Column);
-                Console.WriteLine("Target position: [{0},{1}]", end.XY.Line, end.XY.Column);
-                return false;
-            }
-            List<Node> listFathers = environment.createFatherList(targetNode);
-            List<Node> cloneListFathers = listFathers.ToList<Node>();
-            Console.WriteLine("Going to trashDeposit located in [{0}][{1}]", end.XY.Line, end.XY.Column);
-            Console.WriteLine("Current internal trash capacity: {0}", this.currentInternalTrash);
-            environment.moveAgentAroundEnvironment(this, listFathers, targetNode);
-            this.cleanInternalTrash();
-            cloneListFathers.Reverse();
-            Console.WriteLine("Returning from trashDeposit located in [{0}][{1}]", end.XY.Line, end.XY.Column);
-            environment.moveAgentAroundEnvironment(this, cloneListFathers, targetNode);
-            return true;
-        }
+        //private Position calculateNearestTrash(Position agentPosition)
+        //{
+        //    Position nearestTrash = new Position(0, 0);
+        //    Int32 absolutePosition = Int32.MaxValue;
 
-        private Boolean locatePathToBlankSpotAfterWall(Position targetPosition)
-        {
-            Node begin = new Node(this.CurrentPosition.Line, this.CurrentPosition.Column);
-            Node end = new Node(targetPosition.Line, targetPosition.Column);
-            Node targetNode;
-            targetNode = aStar.PathFindAStar(environment, begin, end);
-            if (targetNode == null)
-            {
-                Console.WriteLine("Way to nearest blank space after wall is impossible or is blocked.");
-                Console.WriteLine("Robot position: [{0},{1}]", this.CurrentPosition.Line, this.CurrentPosition.Column);
-                Console.WriteLine("Target position: [{0},{1}]", end.XY.Line, end.XY.Column);
-                return false;
-            }
-            List<Node> listFathers = environment.createFatherList(targetNode);
-            Console.WriteLine("Going to blank space located in [{0}][{1}]", end.XY.Line, end.XY.Column);
-            Console.WriteLine("Current internal trash capacity: {0}", this.currentInternalTrash);
-            environment.moveAgentAroundEnvironment(this, listFathers, targetNode);
-            return true;
-        }
+        //    foreach (Trash_deposit trash in this.trashDeposits)
+        //    {
+        //        Position tempTrash = new Position(trash.XY.Line, trash.XY.Column);
+        //        Int32 localAbsolutePosition = calculateAbsolutePosition(agentPosition, tempTrash);
+        //        if (localAbsolutePosition < absolutePosition)
+        //        {
+        //            nearestTrash = tempTrash;
+        //            absolutePosition = localAbsolutePosition;
+        //        }
+        //    }
+        //    return nearestTrash;
+        //}
+
+        //private int calculateAbsolutePosition(Position elem1, Position elem2)
+        //{
+        //    int absoluteX = Math.Abs(elem1.Line - elem2.Line);
+        //    int absoluteY = Math.Abs(elem1.Column - elem2.Column);
+
+        //    return absoluteX + absoluteY;
+        //}
+
+        //private Boolean locateNearestTrashAndCleanTrash()
+        //{
+        //    Node begin = new Node(this.CurrentPosition.Line, this.CurrentPosition.Column);
+        //    Position nearestTrash = this.calculateNearestTrash(this.CurrentPosition);
+        //    Node end = new Node(nearestTrash.Line, nearestTrash.Column);
+        //    Node targetNode;
+        //    targetNode = aStar.PathFindAStar(environment, begin, end);
+        //    if (targetNode == null)
+        //    {
+        //        Console.WriteLine("Way to nearest trash is impossible or is blocked.");
+        //        Console.WriteLine("Robot position: [{0},{1}]", this.CurrentPosition.Line, this.CurrentPosition.Column);
+        //        Console.WriteLine("Target position: [{0},{1}]", end.XY.Line, end.XY.Column);
+        //        return false;
+        //    }
+        //    List<Node> listFathers = environment.createFatherList(targetNode);
+        //    List<Node> cloneListFathers = listFathers.ToList<Node>();
+        //    Console.WriteLine("Going to trashDeposit located in [{0}][{1}]", end.XY.Line, end.XY.Column);
+        //    Console.WriteLine("Current internal trash capacity: {0}", this.currentInternalTrash);
+        //    environment.moveAgentAroundEnvironment(this, listFathers, targetNode);
+        //    this.cleanInternalTrash();
+        //    cloneListFathers.Reverse();
+        //    Console.WriteLine("Returning from trashDeposit located in [{0}][{1}]", end.XY.Line, end.XY.Column);
+        //    environment.moveAgentAroundEnvironment(this, cloneListFathers, targetNode);
+        //    return true;
+        //}
+
+        //private Boolean locatePathToBlankSpotAfterWall(Position targetPosition)
+        //{
+        //    Node begin = new Node(this.CurrentPosition.Line, this.CurrentPosition.Column);
+        //    Node end = new Node(targetPosition.Line, targetPosition.Column);
+        //    Node targetNode;
+        //    targetNode = aStar.PathFindAStar(environment, begin, end);
+        //    if (targetNode == null)
+        //    {
+        //        Console.WriteLine("Way to nearest blank space after wall is impossible or is blocked.");
+        //        Console.WriteLine("Robot position: [{0},{1}]", this.CurrentPosition.Line, this.CurrentPosition.Column);
+        //        Console.WriteLine("Target position: [{0},{1}]", end.XY.Line, end.XY.Column);
+        //        return false;
+        //    }
+        //    List<Node> listFathers = environment.createFatherList(targetNode);
+        //    Console.WriteLine("Going to blank space located in [{0}][{1}]", end.XY.Line, end.XY.Column);
+        //    Console.WriteLine("Current internal trash capacity: {0}", this.currentInternalTrash);
+        //    environment.moveAgentAroundEnvironment(this, listFathers, targetNode);
+        //    return true;
+        //}
     }
 }

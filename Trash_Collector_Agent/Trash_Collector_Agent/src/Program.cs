@@ -55,9 +55,9 @@ namespace Trash_Collector_Agent.src
             Agent robot;
             //Node destinyNode;
             Astar aStar;
-            int size = 15;
+            int size = 26;
             int qtdTrashDeposits = 8;
-            int percentDirty = 70;
+            int percentDirty = 15;
             int internalTrash = 30;
             #endregion
 
@@ -83,7 +83,7 @@ namespace Trash_Collector_Agent.src
             env.buildDirtyEnvironment();
 
             robot.environment = env;
-            aStar = new Astar(env);
+            aStar = new Astar(env, robot);
             robot.aStar = aStar;
 
             env.showEnvironment();
