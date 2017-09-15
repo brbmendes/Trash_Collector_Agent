@@ -53,12 +53,12 @@ namespace Trash_Collector_Agent.src
             #region DECLARAÇÃO DE VARIAVEIS
             Environment env;
             Agent robot;
-            Node destinyNode;
+            //Node destinyNode;
             Astar aStar;
-            int size = 12;
+            int size = 15;
             int qtdTrashDeposits = 8;
-            int percentDirty = 40;
-            int internalTrash = 8;
+            int percentDirty = 70;
+            int internalTrash = 30;
             #endregion
 
             #region INSTANCIAÇÃO DO AGENTE
