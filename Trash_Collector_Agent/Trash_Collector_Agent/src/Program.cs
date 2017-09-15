@@ -55,10 +55,10 @@ namespace Trash_Collector_Agent.src
             Agent robot;
             //Node destinyNode;
             Astar aStar;
-            int size = 26;
-            int qtdTrashDeposits = 8;
+            int size = 12;
+            int qtdTrashDeposits = 3;
             int percentDirty = 15;
-            int internalTrash = 30;
+            int internalTrash = 1;
             #endregion
 
             #region INSTANCIAÇÃO DO AGENTE
