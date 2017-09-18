@@ -309,12 +309,14 @@ namespace Trash_Collector_Agent.src
                 return false;
             }
             List<Node> listFathers = env.createFatherList(targetNode);
+            showPath(listFathers);
             List<Node> cloneListFathers = listFathers.ToList<Node>();
             Console.WriteLine("Going to trashDeposit located in [{0}][{1}]", end.XY.Line, end.XY.Column);
             Console.WriteLine("Current internal trash capacity: {0}", robot.currentInternalTrash);
             env.moveAgentAroundEnvironment(robot, listFathers, targetNode);
             robot.cleanInternalTrash();
             cloneListFathers.Reverse();
+            showPathReturn(cloneListFathers);
             Console.WriteLine("Returning from trashDeposit located in [{0}][{1}]", end.XY.Line, end.XY.Column);
             env.moveAgentAroundEnvironment(robot, cloneListFathers, targetNode);
             return true;
@@ -347,6 +349,31 @@ namespace Trash_Collector_Agent.src
             destiny.Gcost = source.Gcost;
             destiny.Hcost = source.Hcost;
             destiny.Neighbors = source.Neighbors;
+        }
+
+        private void showPath(List<Node> path)
+        {
+            path.RemoveAt(0);
+            path.RemoveAt(path.Count - 1);
+            foreach(Node nd in path)
+            {
+                env.printPath(nd.XY);
+            }
+            Console.WriteLine("\n\n");
+            env.showEnvironment();
+            Console.WriteLine("\n\n");
+        }
+
+        private void showPathReturn(List<Node> path)
+        {
+            path.RemoveAt(0);
+            foreach (Node nd in path)
+            {
+                env.printPath(nd.XY);
+            }
+            Console.WriteLine("\n\n");
+            env.showEnvironment();
+            Console.WriteLine("\n\n");
         }
     }
 }
