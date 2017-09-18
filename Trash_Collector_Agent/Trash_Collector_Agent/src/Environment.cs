@@ -67,22 +67,6 @@ namespace Trash_Collector_Agent.src
             this.trashDeposits = new List<Trash_deposit>();
         }
 
-        ///// <summary>
-        ///// Initialize map with empty blocks
-        ///// </summary>
-        //public void initializeMap()
-        //{
-            
-        //    for (Int32 i = 0; i < this.map.GetLength(0); i++)
-        //    {
-        //        for (Int32 j = 0; j < this.map.GetLength(1); j++)
-        //        {
-        //            this.map.SetValue("-", i, j);
-        //        }
-        //    }
-            
-        //}
-
         /// <summary>
         /// Initialize map with empty blocks
         /// </summary>
@@ -105,9 +89,6 @@ namespace Trash_Collector_Agent.src
         public void positioningAgent(Agent robot)
         {
             this.Map.SetValue("A", robot.CurrentPosition.Line, robot.CurrentPosition.Column);
-            //this.map.SetValue("A ", 0, 0);
-            //this.agent.oldPosition.Add("x", 0);
-            //this.agent.oldPosition.Add("y", 0);
         }
 
         /// <summary>
@@ -287,7 +268,6 @@ namespace Trash_Collector_Agent.src
 
             // Passing trashDeposits list to Agent.
             this.robot.setTrashDeposits(this.trashDeposits);
-            //this.agent.setTrashDeposits(this.trashDeposits);
         }
 
         public void buildDirtyEnvironment()
@@ -429,6 +409,11 @@ namespace Trash_Collector_Agent.src
                 Console.WriteLine("Agent next position: \t[{0}][{1}]", robot.NextPosition.Line, robot.NextPosition.Column);
             }
             Console.WriteLine("Agent target: \t\t[{0}][{1}]", target.XY.Line, target.XY.Column);
+        }
+
+        public void printPath(Position pos)
+        {
+            this.Map.SetValue("P", pos.Line, pos.Column);
         }
 
     }
