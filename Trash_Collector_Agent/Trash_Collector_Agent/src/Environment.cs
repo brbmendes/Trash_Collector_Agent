@@ -410,11 +410,5 @@ namespace Trash_Collector_Agent.src
             }
             Console.WriteLine("Agent target: \t\t[{0}][{1}]", target.XY.Line, target.XY.Column);
         }
-
-        public void printPath(Position pos)
-        {
-            this.Map.SetValue("P", pos.Line, pos.Column);
-        }
-
     }
 }
