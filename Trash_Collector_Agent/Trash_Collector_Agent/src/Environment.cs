@@ -104,6 +104,7 @@ namespace Trash_Collector_Agent.src
                 }
                 Console.WriteLine("\n");
             }
+            Console.ReadKey();
         }
 
         /// <summary>
