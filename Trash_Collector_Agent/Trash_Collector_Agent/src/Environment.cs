@@ -396,7 +396,10 @@ namespace Trash_Collector_Agent.src
 
         public void printAgent(Agent robot)
         {
-            this.Map.SetValue("-", robot.LastPosition.Line, robot.LastPosition.Column);
+            if(this.Map.GetValue(robot.LastPosition.Line, robot.LastPosition.Column).equals("-") 
+               || this.Map.GetValue(robot.LastPosition.Line, robot.LastPosition.Column).equals("A")){
+                this.Map.SetValue("-", robot.LastPosition.Line, robot.LastPosition.Column);
+            }
             this.Map.SetValue("A", robot.CurrentPosition.Line, robot.CurrentPosition.Column);
         }
 
