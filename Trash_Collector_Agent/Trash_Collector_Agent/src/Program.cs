@@ -57,8 +57,8 @@ namespace Trash_Collector_Agent.src
             Astar aStar;
             int size = 12;
             int qtdTrashDeposits = 3;
-            int percentDirty = 15;
-            int internalTrash = 1;
+            int percentDirty = 18;
+            int internalTrash = 3;
             #endregion
 
             #region INSTANCIAÇÃO DO AGENTE
@@ -87,25 +87,11 @@ namespace Trash_Collector_Agent.src
             robot.aStar = aStar;
 
             env.showEnvironment();
-            Console.ReadKey();
             #endregion
 
 
             #region EXECUTA A*
-            //// A* que limpa ambiente
             robot.clean();
-
-            //// A* só move
-            //destinyNode = robot.move();
-            //List<Node> listFathers = env.createFatherList(destinyNode);
-            //List<Node> listFathersReturning = listFathers.ToList();
-            //listFathersReturning.Reverse(); // Inverte para voltar ao nodo inicial.
-            //env.moveAgentAroundEnvironment(robot, listFathers, destinyNode);
-            //Program.breakLines();
-            //Console.WriteLine("Agente está retornando para posição inicial.");
-            //destinyNode = listFathersReturning.Last();
-            //env.moveAgentAroundEnvironment(robot, listFathersReturning, destinyNode);
-            //Program.breakLines();
             #endregion
 
             Console.ReadKey();
